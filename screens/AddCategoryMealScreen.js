@@ -8,13 +8,16 @@ export default function AddCategoryMealScreen({ route, navigation }) {
   const [categoryMeals, setCategoryMeals] = useState([]);
   const { category } = route.params || {}; 
   const { colors } = useTheme();
+  const [sortOption, setSortOption] = useState('name');
+  const [sortDirection, setSortDirection] = useState('asc');
 
   useEffect(() => {
     const fetchMeals = async () => {
       try {
         const savedMeals = await AsyncStorage.getItem('meals');
         const parsedMeals = savedMeals ? JSON.parse(savedMeals) : [];
-        setMeals(parsedMeals);
+        const sortedMeals = sortMeals(parsedMeals, sortOption);
+        setMeals([...sortedMeals]);
       } catch (error) {
         Alert.alert('Error', 'Failed to load meals');
       }
@@ -34,7 +37,23 @@ export default function AddCategoryMealScreen({ route, navigation }) {
     fetchCategoryMeals();
     const intervalId = setInterval(fetchMeals, 100);
     return () => clearInterval(intervalId);
-  }, [category]);
+  }, [category,sortOption,sortDirection]);
+
+
+  const sortMeals = (meals, option) => {
+    let sortedMeals;
+    switch (option) {
+      case 'name':
+        sortedMeals = meals.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'calories':
+        sortedMeals = meals.sort((a, b) => a.calories - b.calories);
+        break;
+      default:
+        sortedMeals = meals;
+    }
+    return sortDirection === 'asc' ? sortedMeals : sortedMeals.reverse();
+  };
 
   const isMealInCategory = (mealId) => {
     return categoryMeals.some(meal => meal.id === mealId);
@@ -77,24 +96,8 @@ export default function AddCategoryMealScreen({ route, navigation }) {
     AsyncStorage.setItem(`meals_${category}`, JSON.stringify(updatedCategoryMeals));
   };
 
-  const removeDuplicateMeals = (meals) => {
-    const uniqueMeals = [];
-    const mealIds = new Set();
-  
-    meals.forEach((meal) => {
-      if (!mealIds.has(meal.id)) {
-        uniqueMeals.push(meal);
-        mealIds.add(meal.id);
-      }
-    });
-  
-    return uniqueMeals;
-  };
-  
-  
-
   const handleSave = () => {
-    navigation.goBack();
+    navigation.navigate('Home');
   };
 
   return (
@@ -103,6 +106,49 @@ export default function AddCategoryMealScreen({ route, navigation }) {
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title={`Manage ${category.charAt(0).toUpperCase() + category.slice(1)}`} />
       </Appbar.Header>
+
+      {meals.length !==0? (
+        <View style={styles.sortButtonsContainer}>
+          <Text style={styles.mealName}>Sort By</Text>
+        <Button
+          mode={sortOption === 'name' ? 'contained' : 'outlined'}
+          onPress={() => setSortOption('name')}
+          style={[
+            styles.sortButton,
+            sortOption === 'name' && styles.selectedButton,
+          ]}
+          labelStyle={[
+            styles.sortButtonLabel,
+            sortOption === 'name' && styles.selectedButtonLabel,
+          ]}
+        >
+          A👉Z
+        </Button>
+        <Button
+          mode={sortOption === 'calories' ? 'contained' : 'outlined'}
+          onPress={() => setSortOption('calories')}
+          style={[
+            styles.sortButton,
+            sortOption === 'calories' && styles.selectedButton,
+          ]}
+          labelStyle={[
+            styles.sortButtonLabel,
+            sortOption === 'calories' && styles.selectedButtonLabel,
+          ]}
+        >
+          Cal
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+          style={styles.toggleButton}
+          labelStyle={styles.toggleButtonLabel}
+        >
+          {sortDirection === 'asc' ? '👆' : '👇'}
+        </Button>
+      </View>
+      ): (null)}
+      
 
       {meals.length === 0 ? (
         <View style={styles.noDataContainer}>
@@ -178,13 +224,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f9f9f9',
   },
   mealCard: {
     marginVertical: 8,
-    borderRadius: 8,
-    elevation: 4,
-    backgroundColor: '#fff',
+    borderRadius: 12,
+    elevation: 3,
+    backgroundColor: '#ffffff',
+    padding: 8,
   },
   mealInfo: {
     marginBottom: 8,
@@ -192,31 +239,38 @@ const styles = StyleSheet.create({
   mealName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#2c3e50',
     marginBottom: 4,
   },
   nutrientText: {
     fontSize: 14,
-    color: '#555',
+    color: '#7f8c8d',
   },
   toggleButton: {
     alignSelf: 'flex-end',
     borderRadius: 20,
     paddingHorizontal: 16,
-    marginTop: 8,
+    paddingVertical: 4,
+    marginTop: 12,
   },
   fab: {
     position: 'absolute',
     margin: 16,
     right: 0,
     bottom: 80,
-    backgroundColor: 'grey',
+    backgroundColor: '#007bff',
   },
   doneButton: {
     marginTop: 16,
-    backgroundColor: '#6750a5',
-    paddingVertical: 8,
+    backgroundColor: '#4caf50',
+    paddingVertical: 10,
     borderRadius: 25,
+    alignItems: 'center',
+  },
+  doneButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   noDataContainer: {
     flex: 1,
@@ -225,16 +279,58 @@ const styles = StyleSheet.create({
   },
   noDataText: {
     fontSize: 18,
-    color: '#888',
+    color: '#95a5a6',
+    textAlign: 'center',
   },
   quantityText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginHorizontal: 8,
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 8,
+  },
+  sortButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginVertical: 16,
+    paddingHorizontal: 8,
+  },
+  sortButton: {
+    flex: 1,
+    marginHorizontal: 6,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#007bff',
+    backgroundColor: '#ffffff',
+    elevation: 2,
+  },
+  selectedButton: {
+    backgroundColor: '#007bff',
+  },
+  sortButtonLabel: {
+    color: '#007bff',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  selectedButtonLabel: {
+    color: '#ffffff',
+  },
+  toggleButton: {
+    flex: 1,
+    marginHorizontal: 6,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#f39c12',
+    backgroundColor: '#f39c12',
+    elevation: 2,
+  },
+  toggleButtonLabel: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });

@@ -101,9 +101,10 @@ export default function HomeScreen({ navigation }) {
   };
   
   const savebutton = () => {
-    if (totals.calories === 0 || totals.protein === 0 || totals.carbs === 0 || totals.fats === 0) {
+    if (totals.calories === 0 && totals.protein === 0 && totals.carbs === 0 && totals.fats === 0) {
       return;
     }
+    
     saveDailyTotals();
     resetMeals();
   };

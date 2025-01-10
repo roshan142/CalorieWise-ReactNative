@@ -54,7 +54,7 @@ export default function Developermode({ navigation }) {
         name: 'Grilled Chicken Breast',
         calories: 250,
         protein: 40,
-        carbs: 0,
+        carbs: 1,
         fats: 10,
       },
       {
