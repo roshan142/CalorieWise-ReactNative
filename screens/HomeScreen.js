@@ -13,6 +13,7 @@ export default function HomeScreen({ navigation }) {
   });
   const [totals, setTotals] = useState({ calories: 0, protein: 0, carbs: 0, fats: 0 });
   const [userData, setUserData] = useState({ name: '', calories: 0, protein: 0, carbs: 0, fats: 0 });
+  // AsyncStorage.clear()
 
   useEffect(() => {
 
@@ -65,10 +66,10 @@ export default function HomeScreen({ navigation }) {
 
     for (const category in mealsData) {
       mealsData[category].forEach(meal => {
-        newTotals.calories += meal.calories || 0;
-        newTotals.protein += meal.protein || 0;
-        newTotals.carbs += meal.carbs || 0;
-        newTotals.fats += meal.fats || 0;
+        newTotals.calories += meal.calories*meal.quantity || 0;
+        newTotals.protein += meal.protein*meal.quantity || 0;
+        newTotals.carbs += meal.carbs*meal.quantity || 0;
+        newTotals.fats += meal.fats*meal.quantity || 0;
       });
     }
 
@@ -153,7 +154,7 @@ export default function HomeScreen({ navigation }) {
         {(meals[mealType] || []).length > 0 ? (
           (meals[mealType] || []).map((meal, index) => (
             <Paragraph key={index} style={styles.mealText}>
-              {meal.name} - Calories: {meal.calories}, Protein: {meal.protein}g, Carbs: {meal.carbs}g, Fats: {meal.fats}g 
+              {meal.name} - Qty: {meal.quantity}, Calories: {meal.calories}, Protein: {meal.protein}g, Carbs: {meal.carbs}g, Fats: {meal.fats}g 
             </Paragraph>
           ))
         ) : (
@@ -170,7 +171,7 @@ export default function HomeScreen({ navigation }) {
   const calorie_progress = userData.calories ? totals.calories / userData.calories : 0;
   const protein_progress = userData.protein ? totals.protein / userData.protein : 0;
   const carbs_progress = userData.carbs ? totals.carbs / userData.carbs : 0;
-  const fats_progress = userData.fats ? totals.fats / userData.fats : 0;
+  const fats_progress = userData.fats ? totals.fats / userData.fats: 0;
   const todayDate = moment().format('dddd, MMMM D, YYYY');
   
   return (

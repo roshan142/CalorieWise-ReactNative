@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Appbar, Button, Card, List, FAB, Paragraph, useTheme } from 'react-native-paper';
+import { Appbar, Button, Card, List, FAB, Paragraph, useTheme,IconButton  } from 'react-native-paper';
 
 export default function AddCategoryMealScreen({ route, navigation }) {
   const [meals, setMeals] = useState([]);
@@ -46,6 +46,7 @@ export default function AddCategoryMealScreen({ route, navigation }) {
       if (isMealInCategory(meal.id)) {
         updatedCategoryMeals = updatedCategoryMeals.filter(m => m.id !== meal.id);
       } else {
+        meal.quantity = 1;
         updatedCategoryMeals.push(meal);
       }
       await AsyncStorage.setItem(`meals_${category}`, JSON.stringify(updatedCategoryMeals));
@@ -54,6 +55,43 @@ export default function AddCategoryMealScreen({ route, navigation }) {
       Alert.alert('Error', 'Failed to update meal in category');
     }
   };
+  const getMealQuantity = (mealId) => {
+    const meal = categoryMeals.find((meal) => meal.id === mealId);
+    return meal ? meal.quantity : 1;
+  };
+  const handleQuantityChange = (meal, delta) => {
+    const existingMealIndex = categoryMeals.findIndex((m) => m.id === meal.id);
+    let updatedCategoryMeals = [...categoryMeals];
+  
+    if (existingMealIndex !== -1) {
+      updatedCategoryMeals[existingMealIndex].quantity = Math.max(
+        1,
+        updatedCategoryMeals[existingMealIndex].quantity + delta
+      );
+    } else {
+      meal.quantity = Math.max(1, 1 + delta);
+      updatedCategoryMeals.push(meal);
+    }
+  
+    setCategoryMeals(updatedCategoryMeals);
+    AsyncStorage.setItem(`meals_${category}`, JSON.stringify(updatedCategoryMeals));
+  };
+
+  const removeDuplicateMeals = (meals) => {
+    const uniqueMeals = [];
+    const mealIds = new Set();
+  
+    meals.forEach((meal) => {
+      if (!mealIds.has(meal.id)) {
+        uniqueMeals.push(meal);
+        mealIds.add(meal.id);
+      }
+    });
+  
+    return uniqueMeals;
+  };
+  
+  
 
   const handleSave = () => {
     navigation.goBack();
@@ -72,38 +110,55 @@ export default function AddCategoryMealScreen({ route, navigation }) {
         </View>
       ) : (
         <FlatList
-          data={meals}
-          renderItem={({ item }) => (
-            <Card style={styles.mealCard}>
-              <Card.Content>
-                <View style={styles.mealInfo}>
-                  <Text style={styles.mealName}>{item.name}</Text>
-                  <Paragraph style={styles.nutrientText}>Calories: {item.calories} cal</Paragraph>
-                  <Paragraph style={styles.nutrientText}>Protein: {item.protein}g</Paragraph>
-                  <Paragraph style={styles.nutrientText}>Carbs: {item.carbs}g</Paragraph>
-                  <Paragraph style={styles.nutrientText}>Fats: {item.fats}g</Paragraph>
-                </View>
-                <Button
-                  mode={isMealInCategory(item.id) ? "outlined" : "contained"}
-                  onPress={() => handleMealToggle(item)}
-                  style={[
-                    styles.toggleButton,
-                    {
-                      backgroundColor: isMealInCategory(item.id) ? colors.surface : colors.primary,
-                      borderColor: colors.primary,
-                    },
-                  ]}
-                  labelStyle={{
-                    color: isMealInCategory(item.id) ? colors.primary : colors.background,
-                  }}
-                >
-                  {isMealInCategory(item.id) ? "Remove" : "Add"}
-                </Button>
-              </Card.Content>
-            </Card>
-          )}
-          keyExtractor={(item) => item.id.toString()}
-        />
+  data={meals}
+  renderItem={({ item }) => (
+    <Card style={styles.mealCard}>
+      <Card.Content>
+        <View style={styles.mealInfo}>
+          <Text style={styles.mealName}>{item.name}</Text>
+          <Paragraph style={styles.nutrientText}>Calories: {item.calories * getMealQuantity(item.id)} cal</Paragraph>
+          <Paragraph style={styles.nutrientText}>Protein: {item.protein * getMealQuantity(item.id)}g</Paragraph>
+          <Paragraph style={styles.nutrientText}>Carbs: {item.carbs * getMealQuantity(item.id)}g</Paragraph>
+          <Paragraph style={styles.nutrientText}>Fats: {item.fats * getMealQuantity(item.id)}g</Paragraph>
+        </View>
+        <View style={styles.quantityContainer}>
+          <IconButton
+            icon="minus"
+            size={20}
+            onPress={() => handleQuantityChange(item, -1)}
+            disabled={!isMealInCategory(item.id)}
+          />
+          <Text style={styles.quantityText}>{getMealQuantity(item.id)}</Text>
+          <IconButton
+            icon="plus"
+            size={20}
+            onPress={() => handleQuantityChange(item, 1)}
+            disabled={!isMealInCategory(item.id)}
+          />
+        </View>
+
+        <Button
+          mode={isMealInCategory(item.id) ? "outlined" : "contained"}
+          onPress={() => handleMealToggle(item)}
+          style={[
+            styles.toggleButton,
+            {
+              backgroundColor: isMealInCategory(item.id) ? colors.surface : colors.primary,
+              borderColor: colors.primary,
+            },
+          ]}
+          labelStyle={{
+            color: isMealInCategory(item.id) ? colors.primary : colors.background,
+          }}
+        >
+          {isMealInCategory(item.id) ? "Remove" : "Add"}
+        </Button>
+      </Card.Content>
+    </Card>
+  )}
+  keyExtractor={(item, index) => `${item.id}-${index}`} // Ensure unique keys
+/>
+
       )}
 
       <FAB
@@ -171,5 +226,15 @@ const styles = StyleSheet.create({
   noDataText: {
     fontSize: 18,
     color: '#888',
+  },
+  quantityText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginHorizontal: 8,
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
   },
 });
