@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useCallback } from 'react';
 import { View, FlatList, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FAB, Card, Title, Paragraph, Button } from 'react-native-paper';
+import { FAB, Card, Title, Paragraph, Button,Text } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 
 export default function ViewMealScreen({ navigation }) {
@@ -10,6 +10,8 @@ export default function ViewMealScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const itemsPerPage = 4;
+  const [sortOption, setSortOption] = useState('name');
+  const [sortDirection, setSortDirection] = useState('asc');
 
   useFocusEffect(
     useCallback(() => {
@@ -17,15 +19,16 @@ export default function ViewMealScreen({ navigation }) {
       try {
         const savedMeals = await AsyncStorage.getItem('meals');
         const parsedMeals = savedMeals ? JSON.parse(savedMeals) : [];
-        setMeals(parsedMeals);
-        setVisibleMeals(parsedMeals.slice(0, itemsPerPage)); // Load the first 4 meals initially
+        const sortedMeals = sortMeals(parsedMeals, sortOption);
+        setMeals([...sortedMeals]);
+        setVisibleMeals(sortedMeals.slice(0, itemsPerPage)); // Load the first 4 meals initially
       } catch (error) {
         console.error('Failed to load meals', error);
       }
     };
 
     fetchMeals();
-  }, [])
+  }, [sortOption,sortDirection])
 );
 
   const loadMoreMeals = () => {
@@ -54,6 +57,21 @@ export default function ViewMealScreen({ navigation }) {
     }
   };
 
+  const sortMeals = (meals, option) => {
+    let sortedMeals;
+    switch (option) {
+      case 'name':
+        sortedMeals = meals.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'calories':
+        sortedMeals = meals.sort((a, b) => a.calories - b.calories);
+        break;
+      default:
+        sortedMeals = meals;
+    }
+    return sortDirection === 'asc' ? sortedMeals : sortedMeals.reverse();
+  };
+
   const renderMeal = ({ item }) => (
     <Card style={styles.card}>
       <Card.Content>
@@ -79,6 +97,48 @@ export default function ViewMealScreen({ navigation }) {
       <View style={styles.headerContainer}>
         <Title style={styles.title}>Total Meals: {meals.length}</Title>
       </View>
+
+      {meals.length !==0? (
+        <View style={styles.sortButtonsContainer}>
+          <Text style={styles.cardTitle}>Sort By</Text>
+        <Button
+          mode={sortOption === 'name' ? 'contained' : 'outlined'}
+          onPress={() => setSortOption('name')}
+          style={[
+            styles.sortButton,
+            sortOption === 'name' && styles.selectedButton,
+          ]}
+          labelStyle={[
+            styles.sortButtonLabel,
+            sortOption === 'name' && styles.selectedButtonLabel,
+          ]}
+        >
+          A👉Z
+        </Button>
+        <Button
+          mode={sortOption === 'calories' ? 'contained' : 'outlined'}
+          onPress={() => setSortOption('calories')}
+          style={[
+            styles.sortButton,
+            sortOption === 'calories' && styles.selectedButton,
+          ]}
+          labelStyle={[
+            styles.sortButtonLabel,
+            sortOption === 'calories' && styles.selectedButtonLabel,
+          ]}
+        >
+          Cal
+        </Button>
+        <Button
+          mode="outlined"
+          onPress={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+          style={styles.toggleButton}
+          labelStyle={styles.toggleButtonLabel}
+        >
+          {sortDirection === 'asc' ? '👆' : '👇'}
+        </Button>
+      </View>
+      ): (null)}
 
       {meals.length === 0 ? (
         <Paragraph style={styles.noMeals}>No Meals Available</Paragraph>
@@ -154,5 +214,46 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: 'red',
+  },
+  sortButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginVertical: 16,
+    paddingHorizontal: 8,
+  },
+  sortButton: {
+    flex: 1,
+    marginHorizontal: 6,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#007bff',
+    backgroundColor: '#ffffff',
+    elevation: 2,
+  },
+  selectedButton: {
+    backgroundColor: '#007bff',
+  },
+  sortButtonLabel: {
+    color: '#007bff',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  selectedButtonLabel: {
+    color: '#ffffff',
+  },
+  toggleButton: {
+    flex: 1,
+    marginHorizontal: 6,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#f39c12',
+    backgroundColor: '#f39c12',
+    elevation: 2,
+  },
+  toggleButtonLabel: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
