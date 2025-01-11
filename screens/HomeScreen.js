@@ -248,7 +248,8 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   noMealsText: {
-    fontSize: 14,
+    fontWeight: 'bold',
+    fontSize: 18,
     color: '#999',
   },
   cardActions: {
@@ -263,6 +264,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   progressText: {
+    fontWeight: 'bold',
     fontSize: 14,
     textAlign: 'center',
     marginTop: 4,
@@ -289,6 +291,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   dateText: {
+    fontWeight: 'bold',
     fontSize: 16,
     color: '#555',
   },

@@ -114,7 +114,7 @@ export default function Overview({ navigation }) {
                 }}
                 width={screenWidth - 48}
                 height={250}
-                yAxisSuffix={chart.title.includes('Calories') ? ' cal' : ' g'}
+                yAxisSuffix={chart.title.includes('Calorie Intake') ? ' cal' : ' g'}
                 fromZero
                 chartConfig={{
                   backgroundColor: '#ffffff',
@@ -140,7 +140,7 @@ export default function Overview({ navigation }) {
                 verticalLabelRotation={0}
               />
               <Divider style={styles.divider} />
-              <Text style={styles.targetLabel}>{`Target: ${chart.target} ${chart.title.includes('Calories') ? 'cal' : 'g'}`}</Text>
+              <Text style={styles.targetLabel}>{`Target: ${chart.target} ${chart.title.includes('Calorie Intake') ? 'cal' : 'g'}`}</Text>
             </Card.Content>
           </Card>
         ))

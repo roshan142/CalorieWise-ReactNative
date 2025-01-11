@@ -1,7 +1,7 @@
-import React, { useState, useEffect,useCallback } from 'react';
+import React, { useState,useCallback } from 'react';
 import { View, FlatList, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FAB, Card, Title, Paragraph, Button,Text } from 'react-native-paper';
+import { FAB, Card, Title, Paragraph, Button,TextInput } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 
 export default function ViewMealScreen({ navigation }) {
@@ -12,35 +12,38 @@ export default function ViewMealScreen({ navigation }) {
   const itemsPerPage = 4;
   const [sortOption, setSortOption] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const sortOptions = ['calories', 'protein', 'carbs', 'fats']; // Define the sorting options
+  const [currentSortIndex, setCurrentSortIndex] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
-    const fetchMeals = async () => {
-      try {
-        const savedMeals = await AsyncStorage.getItem('meals');
-        const parsedMeals = savedMeals ? JSON.parse(savedMeals) : [];
-        const sortedMeals = sortMeals(parsedMeals, sortOption);
-        setMeals([...sortedMeals]);
-        setVisibleMeals(sortedMeals.slice(0, itemsPerPage)); // Load the first 4 meals initially
-      } catch (error) {
-        console.error('Failed to load meals', error);
-      }
-    };
+      const fetchMeals = async () => {
+        try {
+          const savedMeals = await AsyncStorage.getItem('meals');
+          const parsedMeals = savedMeals ? JSON.parse(savedMeals) : [];
+          const sortedMeals = sortMeals(parsedMeals, sortOption);
+          setMeals([...sortedMeals]);
+          setVisibleMeals(sortedMeals.slice(0, itemsPerPage));
+        } catch (error) {
+          console.error('Failed to load meals', error);
+        }
+      };
 
-    fetchMeals();
-  }, [sortOption,sortDirection])
-);
+      fetchMeals();
+    }, [sortOption, sortDirection])
+  );
 
   const loadMoreMeals = () => {
     if (!loading && visibleMeals.length < meals.length) {
-      setLoading(true);
       setTimeout(() => {
         const newPage = page + 1;
-        const newMeals = meals.slice(0, newPage * itemsPerPage);
-        setVisibleMeals(newMeals);
+        setLoading(true);
+        setVisibleMeals(meals.slice(0, newPage * itemsPerPage));
         setPage(newPage);
         setLoading(false);
-      }, 1000); // Simulate a network delay
+      }, 500); // Simulate a network delay
     }
   };
 
@@ -51,7 +54,7 @@ export default function ViewMealScreen({ navigation }) {
       const updatedMeals = meals.filter((m) => m.id !== mealId);
       await AsyncStorage.setItem('meals', JSON.stringify(updatedMeals));
       setMeals(updatedMeals);
-      setVisibleMeals(updatedMeals.slice(0, page * itemsPerPage)); // Update visible meals
+      setVisibleMeals(updatedMeals.slice(0, page * itemsPerPage));
     } catch (error) {
       Alert.alert('Error', 'Failed to delete the meal');
     }
@@ -61,15 +64,40 @@ export default function ViewMealScreen({ navigation }) {
     let sortedMeals;
     switch (option) {
       case 'name':
-        sortedMeals = meals.sort((a, b) => a.name.localeCompare(b.name));
+        sortedMeals = [...meals].sort((a, b) => a.name.localeCompare(b.name));
         break;
       case 'calories':
-        sortedMeals = meals.sort((a, b) => a.calories - b.calories);
+        sortedMeals = [...meals].sort((a, b) => a.calories - b.calories);
+        break;
+      case 'protein':
+        sortedMeals = [...meals].sort((a, b) => a.protein - b.protein);
+        break;
+      case 'carbs':
+        sortedMeals = [...meals].sort((a, b) => a.carbs - b.carbs);
+        break;
+      case 'fats':
+        sortedMeals = [...meals].sort((a, b) => a.fats - b.fats);
         break;
       default:
         sortedMeals = meals;
     }
     return sortDirection === 'asc' ? sortedMeals : sortedMeals.reverse();
+  };
+
+  const handleSearch = useCallback(() => {
+    setDebouncedQuery(searchQuery.trim().toLowerCase());
+  }, [searchQuery]);
+
+  const clearSearch = useCallback(() => {
+    setSearchQuery('');
+    setDebouncedQuery('');
+    setVisibleMeals(meals.slice(0, page * itemsPerPage)); // Reset to paginated meals
+  }, [meals, page]);
+
+  const cycleSortOption = () => {
+    const nextIndex = (currentSortIndex + 1) % sortOptions.length; // Cycle to the next index
+    setSortOption(sortOptions[nextIndex]); // Set the new sort option
+    setCurrentSortIndex(nextIndex); // Update the current index
   };
 
   const renderMeal = ({ item }) => (
@@ -94,70 +122,92 @@ export default function ViewMealScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {meals.length !== 0 && (
       <View style={styles.headerContainer}>
-        <Title style={styles.title}>Total Meals: {meals.length}</Title>
+        <View style={styles.searchContainer}>
+          <TextInput
+            mode="outlined"
+            label="Search Meals"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            style={styles.searchBar}
+          />
+          <Button mode="contained" onPress={handleSearch} style={styles.searchButton}>
+            Search
+          </Button>
+          {searchQuery ? (
+            <Button mode="text" onPress={clearSearch} style={styles.clearButton}>
+              Clear
+            </Button>
+          ) : null}
+        </View>
       </View>
-
-      {meals.length !==0? (
-        <View style={styles.sortButtonsContainer}>
-          <Text style={styles.cardTitle}>Sort By</Text>
-        <Button
-          mode={sortOption === 'name' ? 'contained' : 'outlined'}
-          onPress={() => setSortOption('name')}
-          style={[
-            styles.sortButton,
-            sortOption === 'name' && styles.selectedButton,
-          ]}
-          labelStyle={[
-            styles.sortButtonLabel,
-            sortOption === 'name' && styles.selectedButtonLabel,
-          ]}
-        >
-          A👉Z
-        </Button>
-        <Button
-          mode={sortOption === 'calories' ? 'contained' : 'outlined'}
-          onPress={() => setSortOption('calories')}
-          style={[
-            styles.sortButton,
-            sortOption === 'calories' && styles.selectedButton,
-          ]}
-          labelStyle={[
-            styles.sortButtonLabel,
-            sortOption === 'calories' && styles.selectedButtonLabel,
-          ]}
-        >
-          Cal
-        </Button>
-        <Button
-          mode="outlined"
-          onPress={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
-          style={styles.toggleButton}
-          labelStyle={styles.toggleButtonLabel}
-        >
-          {sortDirection === 'asc' ? '👆' : '👇'}
-        </Button>
-      </View>
-      ): (null)}
-
-      {meals.length === 0 ? (
-        <Paragraph style={styles.noMeals}>No Meals Available</Paragraph>
-      ) : (
-        <FlatList
-          data={visibleMeals}
-          renderItem={renderMeal}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.list}
-          onEndReached={loadMoreMeals} // Load more when scrolled to the bottom
-          onEndReachedThreshold={0.5} // Trigger when 50% from the bottom
-          ListFooterComponent={loading ? <ActivityIndicator size="large" color="#000" /> : null} // Show loading spinner
-        />
       )}
+
+      {meals.length !== 0 && (
+        <View style={styles.sortButtonsContainer}>
+          <Button
+            mode={sortOption === 'name' ? 'contained' : 'outlined'}
+            onPress={() => setSortOption('name')}
+            style={[styles.sortButton, sortOption === 'name' && styles.selectedButton]}
+            labelStyle={[styles.sortButtonLabel, sortOption === 'name' && styles.selectedButtonLabel]}
+          >
+            A👉Z
+          </Button>
+          <Button
+  mode={sortOption === sortOptions[currentSortIndex] ? 'contained' : 'outlined'}
+  onPress={cycleSortOption}
+  style={[styles.sortButton, sortOption === sortOptions[currentSortIndex] && styles.selectedButton]}
+  labelStyle={[styles.sortButtonLabel, sortOption === sortOptions[currentSortIndex] && styles.selectedButtonLabel]}
+>
+  {sortOptions[currentSortIndex][0].toUpperCase() + sortOptions[currentSortIndex].slice(1)} {/* Display option */}
+</Button>
+          <Button
+            mode="outlined"
+            onPress={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+            style={styles.toggleButton}
+            labelStyle={styles.toggleButtonLabel}
+          >
+            {sortDirection === 'asc' ? '👆' : '👇'}
+          </Button>
+        </View>
+      )}
+
+{debouncedQuery ? (
+  meals.filter((meal) => meal.name.toLowerCase().includes(debouncedQuery)).length === 0 ? (
+    <Paragraph style={styles.noMeals}>No Meals Found</Paragraph>
+  ) : (
+    <FlatList
+      data={meals.filter((meal) =>
+        meal.name.toLowerCase().includes(debouncedQuery)
+      )}
+      renderItem={renderMeal}
+      keyExtractor={(item) => item.id.toString()}
+      contentContainerStyle={styles.list}
+    />
+  )
+) : (
+  visibleMeals.length === 0 ? (
+    <Paragraph style={styles.noMeals}>No Meals Found</Paragraph>
+  ) : (
+    <FlatList
+      data={visibleMeals}
+      renderItem={renderMeal}
+      keyExtractor={(item) => item.id.toString()}
+      contentContainerStyle={styles.list}
+      onEndReached={loadMoreMeals}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={
+        loading ? <ActivityIndicator size="large" color="#000" /> : null
+      }
+    />
+  )
+)}
 
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => navigation.navigate('AddMeal')}
+        onPress={() => navigation.navigate('AddMeal', 'cat')}
       />
     </View>
   );
@@ -181,10 +231,11 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   noMeals: {
-    fontSize: 18,
+    fontWeight: 'bold',
+    fontSize: 20,
     color: '#999',
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: 300,
   },
   list: {
     paddingHorizontal: 16,
@@ -210,7 +261,7 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
-    backgroundColor: 'grey',
+    backgroundColor: '#007bff',
   },
   deleteButton: {
     backgroundColor: 'red',
@@ -220,7 +271,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     marginVertical: 16,
-    paddingHorizontal: 8,
   },
   sortButton: {
     flex: 1,
@@ -255,5 +305,22 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 14,
     fontWeight: '500',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  searchBar: {
+    flex: 1,
+    marginRight: 8,
+  },
+  searchButton: {
+    backgroundColor: '#007bff',
+    marginHorizontal: 4,
+  },
+  clearButton: {
+    marginHorizontal: 4,
+    color: '#f00',
   },
 });
