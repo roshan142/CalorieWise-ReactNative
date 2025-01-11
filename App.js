@@ -14,7 +14,8 @@ import SettingsScreen from './screens/settings.js';
 import InputScreen from './screens/inputscreen.js';
 import Overview from './screens/Overviewscreen.js';
 import Profile from './screens/profilescreen.js';
-import Developermode from './screens/Developermode.js'
+import Developermode from './screens/Developermode.js';
+import ApiMealScreen from './screens/ApiMealScreen.js';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -80,6 +81,7 @@ export default function App() {
         <Stack.Screen name="Input" component={InputScreen} />
         <Stack.Screen name="AddCategoryMealScreen" component={AddCategoryMealScreen} />
         <Stack.Screen name="Developermode" component={Developermode} />
+        <Stack.Screen name="ApiMeal" component={ApiMealScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

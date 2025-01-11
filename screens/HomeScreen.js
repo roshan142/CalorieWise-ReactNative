@@ -219,12 +219,12 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
   },
   mealsContainer: {
     paddingHorizontal: 16,
     paddingBottom: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
     marginHorizontal: 16,
     marginTop: 8,
@@ -235,25 +235,33 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 10,
     elevation: 4,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   mealTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 4,
   },
   mealText: {
     fontSize: 14,
     marginVertical: 2,
-    color: '#333',
+    color: '#555',
   },
   noMealsText: {
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
     color: '#999',
+    textAlign: 'center',
+    marginVertical: 8,
   },
   cardActions: {
     justifyContent: 'space-between',
+    marginTop: 8,
   },
   progressBarContainer: {
     marginVertical: 10,
@@ -262,6 +270,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 4,
+    color: '#555',
   },
   progressText: {
     fontWeight: 'bold',
@@ -273,70 +282,50 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#E0E0E0',
   },
   overviewCard: {
     margin: 16,
     borderRadius: 10,
-    backgroundColor: '#ffffff',
-    elevation: 4,
+    backgroundColor: '#FFFFFF',
+    elevation: 6,
     padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   overviewTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 4,
   },
   divider: {
-    marginVertical: 8,
+    marginVertical: 12,
+    height: 1,
+    backgroundColor: '#E0E0E0',
   },
   dateText: {
     fontWeight: 'bold',
     fontSize: 16,
     color: '#555',
+    marginBottom: 8,
   },
   saveButton: {
     marginTop: 16,
     backgroundColor: '#4CAF50',
-    padding: 8,
+    padding: 12,
     borderRadius: 8,
+    alignSelf: 'center',
+    width: '90%',
   },
-  improvedCard: {
-    margin: 16,
-    borderRadius: 12,
-    backgroundColor: '#ffffff',
-    elevation: 6,
-  },
-  shadowEffect: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  cardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  iconContainer: {
-    marginRight: 16,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  cardTitle: {
-    fontSize: 18,
+  saveButtonText: {
+    fontSize: 17,
     fontWeight: 'bold',
-    color: '#333',
-  },
-  cardDescription: {
-    fontSize: 14,
-    color: '#777',
-  },
-  cardActions: {
-    justifyContent: 'flex-end',
-    paddingHorizontal: 16,
-    paddingBottom: 8,
+    color: '#FFF',
+    textAlign: 'center',
   },
 });
+
 

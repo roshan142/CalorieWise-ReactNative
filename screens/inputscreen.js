@@ -12,7 +12,7 @@ export default function InputScreen({ navigation }) {
   const [carbs, setCarbs] = useState('');
   const [fats, setFats] = useState('');
 
-  const { colors } = useTheme(); // Use theme for colors
+  const { colors } = useTheme();
 
   useEffect(() => {
     const checkStoredValue = async () => {
@@ -54,7 +54,9 @@ export default function InputScreen({ navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Profile</Text>
+      <Text style={[styles.label, { color: colors.primary }]}>Profile</Text>
+      <Divider style={styles.divider} />
+
       <View style={styles.inputContainer}>
         <TextInput
           label="Name"
@@ -71,15 +73,20 @@ export default function InputScreen({ navigation }) {
           mode="outlined"
           style={styles.input}
         />
-        {/* <TextInput
+        <TextInput
           label="Weight (kg)"
           value={weight}
           onChangeText={(text) => setWeight(text.replace(/[^0-9.]/g, ''))}
           keyboardType="numeric"
           mode="outlined"
           style={styles.input}
-        /> */}
-        <Text style={styles.label}>Daily Macros Goals</Text>
+        />
+      </View>
+
+      <Text style={[styles.label, { color: colors.primary }]}>Daily Macros Goals</Text>
+      <Divider style={styles.divider} />
+
+      <View style={styles.inputContainer}>
         <TextInput
           label="Calorie (cal)"
           value={calories}
@@ -113,11 +120,13 @@ export default function InputScreen({ navigation }) {
           style={styles.input}
         />
       </View>
+
       <Button
         mode="contained"
         onPress={handleSave}
         style={[styles.button, { backgroundColor: colors.primary }]}
         contentStyle={styles.buttonContent}
+        icon="check"
       >
         Save & Continue
       </Button>
@@ -128,32 +137,30 @@ export default function InputScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
   label: {
-    fontSize: 26,
-    marginVertical: 10,
-    textAlign: 'left',
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
+    marginBottom: 8,
   },
   inputContainer: {
-    marginTop: 0,
+    marginBottom: 20,
   },
   input: {
-    marginBottom: 15,
+    marginBottom: 12,
   },
   button: {
-    marginTop: 30,
-    borderRadius: 25,
+    marginTop: 20,
+    borderRadius: 30,
   },
   buttonContent: {
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
   divider: {
-    marginVertical: 8,
+    marginVertical: 12,
     backgroundColor: '#e0e0e0',
+    height: 1.5,
   },
 });

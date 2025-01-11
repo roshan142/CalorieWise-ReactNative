@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Profile({ navigation }) {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
-  // const [weight, setWeight] = useState('');
+  const [weight, setWeight] = useState('');
   const [calories, setCalories] = useState('');
   const [protein, setProtein] = useState('');
   const [carbs, setCarbs] = useState('');
@@ -24,7 +24,7 @@ export default function Profile({ navigation }) {
         const userData = JSON.parse(storedData);
         setName(userData.name || '');
         setAge(userData.age ? String(userData.age) : '');
-        // setWeight(userData.weight ? String(userData.weight) : '');
+        setWeight(userData.weight ? String(userData.weight) : '');
         setCalories(userData.calories ? String(userData.calories) : '');
         setProtein(userData.protein ? String(userData.protein) : '');
         setCarbs(userData.carbs ? String(userData.carbs) : '');
@@ -43,7 +43,7 @@ export default function Profile({ navigation }) {
     const userData = { 
       name, 
       age: parseInt(age), 
-      // weight: parseFloat(weight), 
+      weight: parseFloat(weight), 
       calories: parseInt(calories), 
       protein: parseFloat(protein), 
       carbs: parseFloat(carbs), 
@@ -83,14 +83,14 @@ export default function Profile({ navigation }) {
             keyboardType="numeric"
             mode="outlined"
           />
-          {/* <TextInput
+          <TextInput
             style={styles.input}
             value={weight}
             onChangeText={(text) => setWeight(text.replace(/[^0-9.]/g, ''))}
             label="Weight (kg)"
             keyboardType="numeric"
             mode="outlined"
-          /> */}
+          />
         </Card.Content>
       </Card>
 

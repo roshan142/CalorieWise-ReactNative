@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appbar, Button, Card, useTheme, Divider } from 'react-native-paper';
 import moment from 'moment';
+import jsonData from '../app.json';
 
 const max = 10000;
 
 export default function Developermode({ navigation }) {
-  const [appVersion, setAppVersion] = useState('1.0.0');
+  const Version= jsonData.expo.version;
   const { colors } = useTheme();
 
   const savePredefinedMealHistory = async () => {
@@ -150,7 +151,7 @@ export default function Developermode({ navigation }) {
       <Card style={styles.card}>
         <Card.Title title="App Info" />
         <Card.Content>
-          <Text style={styles.infoText}>Version: {appVersion}</Text>
+          <Text style={styles.infoText}>Version: {Version}</Text>
           <Text style={styles.infoText}>Environment: {__DEV__ ? 'Development' : 'Production'}</Text>
         </Card.Content>
       </Card>
