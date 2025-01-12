@@ -12,7 +12,7 @@ export default function AddCategoryMealScreen({ route, navigation }) {
   const [sortDirection, setSortDirection] = useState('asc');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredMeals, setFilteredMeals] = useState([]);
-  const sortOptions = ['calories', 'protein', 'carbs', 'fats']; // Define the sorting options
+  const sortOptions = ['cal', 'protein', 'carbs', 'fats']; // Define the sorting options
   const [currentSortIndex, setCurrentSortIndex] = useState(0);
   
 
@@ -47,7 +47,7 @@ export default function AddCategoryMealScreen({ route, navigation }) {
       switch (option) {
         case 'name':
           return a.name.localeCompare(b.name);
-        case 'calories':
+        case 'cal':
           return a.calories - b.calories;
         case 'protein':
           return a.protein - b.protein;
@@ -186,10 +186,10 @@ export default function AddCategoryMealScreen({ route, navigation }) {
       <Card.Content>
         <View style={styles.mealInfo}>
           <Text style={styles.mealName}>{item.name}</Text>
-          <Paragraph style={styles.nutrientText}>Calories: {item.calories * getMealQuantity(item.id)} cal</Paragraph>
-          <Paragraph style={styles.nutrientText}>Protein: {item.protein * getMealQuantity(item.id)}g</Paragraph>
-          <Paragraph style={styles.nutrientText}>Carbs: {item.carbs * getMealQuantity(item.id)}g</Paragraph>
-          <Paragraph style={styles.nutrientText}>Fats: {item.fats * getMealQuantity(item.id)}g</Paragraph>
+          <Paragraph style={styles.nutrientText}>Calories: {Math.round(item.calories * getMealQuantity(item.id))} cal</Paragraph>
+          <Paragraph style={styles.nutrientText}>Protein: {Math.round(item.protein * getMealQuantity(item.id))}g</Paragraph>
+          <Paragraph style={styles.nutrientText}>Carbs: {Math.round(item.carbs * getMealQuantity(item.id))}g</Paragraph>
+          <Paragraph style={styles.nutrientText}>Fats: {Math.round(item.fats * getMealQuantity(item.id))}g</Paragraph>
         </View>
         <View style={styles.quantityContainer}>
           <IconButton

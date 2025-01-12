@@ -16,7 +16,6 @@ web-build/
 *.key
 *.mobileprovision
 .env
-api.json
 # Metro
 .metro-health-check*
 

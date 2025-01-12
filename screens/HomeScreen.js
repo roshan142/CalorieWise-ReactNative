@@ -66,10 +66,10 @@ export default function HomeScreen({ navigation }) {
 
     for (const category in mealsData) {
       mealsData[category].forEach(meal => {
-        newTotals.calories += meal.calories*meal.quantity || 0;
-        newTotals.protein += meal.protein*meal.quantity || 0;
-        newTotals.carbs += meal.carbs*meal.quantity || 0;
-        newTotals.fats += meal.fats*meal.quantity || 0;
+        newTotals.calories += Math.round(meal.calories*meal.quantity) || 0;
+        newTotals.protein += Math.round(meal.protein*meal.quantity) || 0;
+        newTotals.carbs += Math.round(meal.carbs*meal.quantity) || 0;
+        newTotals.fats += Math.round(meal.fats*meal.quantity) || 0;
       });
     }
 

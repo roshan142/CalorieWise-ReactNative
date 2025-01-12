@@ -37,9 +37,9 @@ export default function ViewMealScreen({ navigation }) {
 
   const loadMoreMeals = () => {
     if (!loading && visibleMeals.length < meals.length) {
+      setLoading(true);
       setTimeout(() => {
         const newPage = page + 1;
-        setLoading(true);
         setVisibleMeals(meals.slice(0, newPage * itemsPerPage));
         setPage(newPage);
         setLoading(false);

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, Alert } from 'react-native';
-import { Appbar, Button, Card, TextInput } from 'react-native-paper';
-import app from '../api.json';
+import { Appbar, Button, Card, TextInput,Divider } from 'react-native-paper';
+import app from './api.json';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ApiMealScreen({ navigation }) {
-  const API_KEY = app.expo.extra.apiKey;
+  const API_KEYS = [app.expo.apiKey.a, app.expo.apiKey.b, app.expo.apiKey.c, app.expo.apiKey.d];
   const BASE_URL = "https://api.calorieninjas.com/v1/nutrition?query=";
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -13,53 +13,56 @@ export default function ApiMealScreen({ navigation }) {
   const [meals, setMeals] = useState([]);
   const max = 10000;
 
-  // Fetch nutrition data from the API
   const fetchNutritionData = async () => {
-    const apiUrl = BASE_URL + encodeURIComponent(searchQuery);
-    try {
-      setIsLoading(true);
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'X-Api-Key': API_KEY,
-        },
-      });
-      if (response.ok) {
-        const result = await response.json();
-        setData(result.items);  // Set fetched data
-      } else {
-        const errorText = await response.text();
-        alert(`Error: ${response.status} - ${errorText}`);
-      }
-    } catch (err) {
-      alert(`Fetch Error: ${err.message}`);
-    } finally {
-      setIsLoading(false);
+    if (!searchQuery.trim()) {
+      Alert.alert("Invalid Input", "Please enter a valid query.");
+      return;
     }
+
+    let success = false;
+    for (const apiKey of API_KEYS) {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${BASE_URL}${encodeURIComponent(searchQuery)}`, {
+          method: 'GET',
+          headers: { 'X-Api-Key': apiKey },
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          setData(result.items);
+          success = true;
+          break;
+        } else {
+          console.warn(`API Key ${apiKey} failed with status ${response.status}`);
+        }
+      } catch (err) {
+        console.warn(`Error with API Key ${apiKey}: ${err.message}`);
+      }
+    }
+
+    if (!success) Alert.alert("Error", "All API keys failed. Please try again later.");
+    setIsLoading(false);
   };
 
-  // Clear search query
   const clearSearch = useCallback(() => {
     setSearchQuery('');
-    setData([]);
+    setData(null);
   }, []);
 
-  // Load meals from AsyncStorage on initial render
   useEffect(() => {
-    const fetchMeals = async () => {
+    const loadMeals = async () => {
       try {
-        const savedMeals = await AsyncStorage.getItem('meals');
-        const parsedMeals = savedMeals ? JSON.parse(savedMeals) : [];
-        setMeals(parsedMeals);
+        const storedMeals = await AsyncStorage.getItem('meals');
+        setMeals(storedMeals ? JSON.parse(storedMeals) : []);
       } catch (error) {
-        console.error('Failed to load meals', error);
+        console.error("Failed to load meals", error);
       }
     };
 
-    fetchMeals();
+    loadMeals();
   }, []);
 
-  // Add a meal to the list and store it in AsyncStorage
   const addMeal = async (item) => {
     const newMeal = {
       id: Math.floor(Math.random() * max),
@@ -71,91 +74,90 @@ export default function ApiMealScreen({ navigation }) {
     };
 
     try {
-      const savedMeals = await AsyncStorage.getItem('meals');
-      const mealsList = savedMeals ? JSON.parse(savedMeals) : [];
-      const updatedMeals = [...mealsList, newMeal];
+      const storedMeals = await AsyncStorage.getItem('meals');
+      const updatedMeals = [...(storedMeals ? JSON.parse(storedMeals) : []), newMeal];
       await AsyncStorage.setItem('meals', JSON.stringify(updatedMeals));
-      setMeals(updatedMeals);  // Update local state to reflect added meal
-      Alert.alert('Success', 'Meal added successfully');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to add the meal');
+      setMeals(updatedMeals);
+      Alert.alert("Success", "Meal added successfully.");
+    } catch {
+      Alert.alert("Error", "Failed to add the meal.");
     }
   };
 
-  // Remove a meal from the list and AsyncStorage
   const removeMeal = async (item) => {
     try {
-      const savedMeals = await AsyncStorage.getItem('meals');
-      const mealsList = savedMeals ? JSON.parse(savedMeals) : [];
-      const updatedMeals = mealsList.filter(meal => meal.name !== item.name);  // Remove by name or ID
+      const storedMeals = await AsyncStorage.getItem('meals');
+      const updatedMeals = storedMeals
+        ? JSON.parse(storedMeals).filter((meal) => meal.name !== item.name)
+        : [];
       await AsyncStorage.setItem('meals', JSON.stringify(updatedMeals));
-      setMeals(updatedMeals);  // Update local state
-      Alert.alert('Success', 'Meal removed successfully');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to remove the meal');
+      setMeals(updatedMeals);
+      Alert.alert("Success", "Meal removed successfully.");
+    } catch {
+      Alert.alert("Error", "Failed to remove the meal.");
     }
   };
 
-  // Check if the meal is already added
-  const isMealAdded = (item) => {
-    return meals.some(meal => meal.name === item.name);
-  };
+  const isMealAdded = (item) => meals.some((meal) => meal.name === item.name);
 
   return (
     <>
       <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Api Meal" />
+        <Appbar.Content title="API Meal Search" />
       </Appbar.Header>
 
       <View style={styles.searchContainer}>
         <TextInput
           mode="outlined"
           label="Search Meals"
+          placeholder="e.g., rice, chicken"
           value={searchQuery}
           onChangeText={setSearchQuery}
           style={styles.searchBar}
         />
-        {searchQuery ? (
+        {searchQuery && (
           <Button mode="text" onPress={clearSearch} style={styles.clearButton}>
             Clear
           </Button>
-        ) : null}
+        )}
       </View>
 
       <View style={styles.container}>
-        <Button mode="contained" onPress={fetchNutritionData} style={styles.button}>
-          Fetch Nutrition Data
+        <Button mode="contained" onPress={fetchNutritionData} style={styles.searchButton}>
+          SEARCH
         </Button>
 
         {isLoading && <ActivityIndicator size="large" color="blue" style={styles.loader} />}
 
-        {data && (
-          <FlatList
-            data={data}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <Card style={styles.card}>
-                <Card.Content>
-                  <Text style={styles.itemText}>Food: {item.name}</Text>
-                  <Text>Size: {item.serving_size_g}g</Text>
-                  <Text>Calories: {item.calories}cal</Text>
-                  <Text>Protein: {item.protein_g}g</Text>
-                  <Text>Carbs: {item.carbohydrates_total_g}g</Text>
-                  <Text>Fats: {item.fat_total_g}g</Text>
-                  <Button
-                    mode="contained"
-                    onPress={() => isMealAdded(item) ? removeMeal(item) : addMeal(item)}
-                    style={styles.addButton}
-                    icon={isMealAdded(item) ? 'minus' : 'plus'}
-                  >
-                    {isMealAdded(item) ? 'Remove' : 'Add'}
-                  </Button>
-                </Card.Content>
-              </Card>
-            )}
-          />
-        )}
+        <FlatList
+          data={data}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <Card style={styles.card}>
+              <Card.Content>
+                <Text style={styles.foodName}>{item.name}</Text>
+                <Text style={styles.details}>Calories: {item.calories} kcal</Text>
+                <Divider />
+                <Text style={styles.details}>Protein: {item.protein_g}g</Text>
+                <Text style={styles.details}>Carbs: {item.carbohydrates_total_g}g</Text>
+                <Text style={styles.details}>Fats: {item.fat_total_g}g</Text>
+                <Divider />
+                <Text style={styles.details}>Serving Size: {item.serving_size_g}g</Text>
+                <Text style={styles.details}>Fibre: {item.fiber_g}g</Text>
+                <Text style={styles.details}>Sugar: {item.sugar_g}g</Text>
+                <Button
+                  mode={isMealAdded(item) ? "outlined" :"contained"}
+                  onPress={() => (isMealAdded(item) ? removeMeal(item) : addMeal(item))}
+                  style={styles.actionButton}
+                  icon={isMealAdded(item) ? "minus" : "plus"}
+                >
+                  {isMealAdded(item) ? "Remove" : "Add"}
+                </Button>
+              </Card.Content>
+            </Card>
+          )}
+        />
       </View>
     </>
   );
@@ -165,19 +167,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
-  },
-  button: {
-    marginVertical: 20,
-    paddingVertical: 10,
-  },
-  loader: {
-    marginVertical: 20,
+    backgroundColor: "#f9f9f9",
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10,
   },
   searchBar: {
     flex: 1,
@@ -186,17 +181,27 @@ const styles = StyleSheet.create({
   clearButton: {
     marginLeft: 8,
   },
+  searchButton: {
+    marginVertical: 16,
+  },
+  loader: {
+    marginVertical: 20,
+  },
   card: {
-    marginVertical: 10,
-    borderRadius: 8,
-    elevation: 3,
+    marginVertical: 8,
+    borderRadius: 10,
+    elevation: 2,
   },
-  itemText: {
+  foodName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    marginBottom: 8,
   },
-  addButton: {
-    marginTop: 10,
-    marginBottom: 10,
+  details: {
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  actionButton: {
+    marginTop: 12,
   },
 });
