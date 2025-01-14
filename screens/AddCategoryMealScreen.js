@@ -2,6 +2,7 @@ import React, { useState, useEffect,  useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Appbar, Button, Card, TextInput, FAB, Paragraph, useTheme,IconButton  } from 'react-native-paper';
+import moment from 'moment';
 
 export default function AddCategoryMealScreen({ route, navigation }) {
   const [meals, setMeals] = useState([]);
@@ -89,6 +90,12 @@ export default function AddCategoryMealScreen({ route, navigation }) {
     try {
       await AsyncStorage.setItem(`meals_${category}`, JSON.stringify(updatedCategoryMeals));
       setCategoryMeals(updatedCategoryMeals);
+      if (updatedCategoryMeals.length > 0) {
+        const todayDate = moment().format('D MMM YYYY');
+        await AsyncStorage.setItem('MealAddedDate', todayDate);
+      } else {
+        await AsyncStorage.removeItem('MealAddedDate');
+      }
     } catch {
       Alert.alert('Error', 'Failed to update meal in category');
     }

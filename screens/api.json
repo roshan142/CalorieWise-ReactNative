@@ -1,10 +1,11 @@
 {
-  "expo": {
-    "apiKey": {
-      "a": "*****************************************",
-      "b": "*****************************************",
-      "c": "*****************************************",
-      "d":"*****************************************"
+    "expo": {
+      "apiKey": {
+        "a": "cNaIsy9tuFLKdFlAoU51Tg==LuQC7JCGWgSxKCM4",
+        "b": "A2f+ztJYM1AuqScxIdkpXQ==jCUY2DWZaE0XpbUG",
+        "c": "lQxoYJS/bzCU/1pteBtAtg==zl68CTZsGiQlSUVX",
+        "d":"zUq665GeIGurLQOh1Bg0iA==zkIWf7iu35EdE0gn"
+      }
     }
   }
-}
+  

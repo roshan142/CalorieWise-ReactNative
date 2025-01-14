@@ -13,10 +13,8 @@ export default function HomeScreen({ navigation }) {
   });
   const [totals, setTotals] = useState({ calories: 0, protein: 0, carbs: 0, fats: 0 });
   const [userData, setUserData] = useState({ name: '', calories: 0, protein: 0, carbs: 0, fats: 0 });
-  // AsyncStorage.clear()
 
   useEffect(() => {
-
     const checkForStoredValue = async () => {
       const storedValue = await AsyncStorage.getItem('userData');
       if (!storedValue) {
@@ -39,8 +37,6 @@ export default function HomeScreen({ navigation }) {
         setMeals(mealData);
         calculateTotals(mealData);
 
-
-
         const storedUserData = await AsyncStorage.getItem('userData');
         if (storedUserData) {
           const userData = JSON.parse(storedUserData);
@@ -55,7 +51,6 @@ export default function HomeScreen({ navigation }) {
     };
       
     fetchMeals();
-  
     const intervalId = setInterval(fetchMeals, 1000);
   
     return () => clearInterval(intervalId);
@@ -63,7 +58,6 @@ export default function HomeScreen({ navigation }) {
 
   const calculateTotals = (mealsData) => {
     const newTotals = { calories: 0, protein: 0, carbs: 0, fats: 0 };
-
     for (const category in mealsData) {
       mealsData[category].forEach(meal => {
         newTotals.calories += Math.round(meal.calories*meal.quantity) || 0;
@@ -72,7 +66,6 @@ export default function HomeScreen({ navigation }) {
         newTotals.fats += Math.round(meal.fats*meal.quantity) || 0;
       });
     }
-
     setTotals(newTotals);
   };
 
@@ -80,21 +73,16 @@ export default function HomeScreen({ navigation }) {
     try {
       const mainMealsJson = await AsyncStorage.getItem('meals');
       const mainMeals = mainMealsJson ? JSON.parse(mainMealsJson) : [];
-  
       const validMealIds = new Set(mainMeals.map(meal => meal.id));
       const categories = ['breakfast', 'lunch', 'snack', 'dinner'];
-  
       for (const category of categories) {
         const categoryMealsJson = await AsyncStorage.getItem(`meals_${category}`);
         const categoryMeals = categoryMealsJson ? JSON.parse(categoryMealsJson) : [];
-  
         const updatedCategoryMeals = categoryMeals.filter(meal => validMealIds.has(meal.id));
-  
         if (updatedCategoryMeals.length !== categoryMeals.length) {
           await AsyncStorage.setItem(`meals_${category}`, JSON.stringify(updatedCategoryMeals));
         }
       }
-  
     } catch (error) {
       Alert.alert('Error', 'Failed to remove invalid meals from categories');
     }
@@ -102,16 +90,17 @@ export default function HomeScreen({ navigation }) {
   
   const savebutton = () => {
     if (totals.calories === 0 && totals.protein === 0 && totals.carbs === 0 && totals.fats === 0) {
+      console.log("All are zero")
       return;
     }
-    
+    console.log("Saved")
     saveDailyTotals();
     resetMeals();
   };
 
   const saveDailyTotals = async () => {
     try {
-      const todayDate = moment().format('D MMM YYYY');
+      const todayDate = await AsyncStorage.getItem('MealAddedDate');
       const historyData = {
         date: todayDate,
         calories: totals.calories,
@@ -119,21 +108,18 @@ export default function HomeScreen({ navigation }) {
         carbs: totals.carbs,
         fats: totals.fats,
       };
-
       const existingHistory = await AsyncStorage.getItem('mealHistory');
       let historyArray = existingHistory ? JSON.parse(existingHistory) : [];
-
       const existingDateIndex = historyArray.findIndex(entry => entry.date === todayDate);
       if (existingDateIndex > -1) {
         historyArray[existingDateIndex] = historyData;
       } else {
         historyArray.push(historyData);
       }
-
       await AsyncStorage.setItem('mealHistory', JSON.stringify(historyArray));
-
+      await AsyncStorage.removeItem('MealAddedDate')
     } catch (error) {
-      Alert.alert('Error', 'Failed to save data');
+      Alert.alert('Error', 'Failed to save data',error);
     }
   };
 
@@ -142,7 +128,6 @@ export default function HomeScreen({ navigation }) {
       await AsyncStorage.multiRemove(['meals_breakfast', 'meals_lunch', 'meals_snack', 'meals_dinner']);
       setMeals({ breakfast: [], lunch: [], snack: [], dinner: [] });
       setTotals({ calories: 0, protein: 0, carbs: 0, fats: 0 });
-
     } catch (error) {
       Alert.alert('Error', 'Failed to reset meal data');
     }

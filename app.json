@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "CalorieWise",
-    "slug": "CalorieManager",
+    "slug": "calorie-wise",
     "version": "2.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -26,8 +26,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "c656391f-83e6-4b79-81a4-4f2f2b90aa14"
+        "projectId": "0b4195e0-1557-4285-b8f5-ebe4f5a22257"
       }
-    }
+    },
+    "owner": "roshan_raja12"
   }
 }
