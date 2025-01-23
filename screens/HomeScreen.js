@@ -54,7 +54,10 @@ export default function HomeScreen({ navigation }) {
         Alert.alert('Error', 'Failed to fetch meals',error);
       }
     };
-    fetchMeals();
+
+    const intervalId = setInterval(fetchMeals, 1000);
+  
+    return () => clearInterval(intervalId);
   }, []);
 
   const calculateTotals = (mealsData) => {
