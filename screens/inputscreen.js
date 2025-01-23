@@ -11,6 +11,7 @@ export default function InputScreen({ navigation }) {
   const [protein, setProtein] = useState('');
   const [carbs, setCarbs] = useState('');
   const [fats, setFats] = useState('');
+  const [water, setWater] = useState(2000);
 
   const { colors } = useTheme();
 
@@ -29,7 +30,7 @@ export default function InputScreen({ navigation }) {
   }, []);
 
   const handleSave = async () => {
-    if (!name || !age || !calories || !protein || !carbs || !fats) {
+    if (!name || !age || !calories || !protein || !carbs || !fats){
       Alert.alert('Missing Fields', 'Please fill out all fields');
       return;
     }
@@ -42,6 +43,7 @@ export default function InputScreen({ navigation }) {
       protein: parseInt(protein),
       carbs: parseInt(carbs),
       fats: parseInt(fats),
+      water: parseInt(water)
     };
 
     try {
@@ -115,6 +117,14 @@ export default function InputScreen({ navigation }) {
           label="Fats (g)"
           value={fats}
           onChangeText={(text) => setFats(text.replace(/[^0-9]/g, ''))}
+          keyboardType="numeric"
+          mode="outlined"
+          style={styles.input}
+        />
+        <TextInput
+          label="Water (ml)"
+          value={water}
+          onChangeText={(text) => setWater(text.replace(/[^0-9]/g, ''))}
           keyboardType="numeric"
           mode="outlined"
           style={styles.input}

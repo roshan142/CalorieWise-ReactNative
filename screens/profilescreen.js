@@ -11,6 +11,7 @@ export default function Profile({ navigation }) {
   const [protein, setProtein] = useState('');
   const [carbs, setCarbs] = useState('');
   const [fats, setFats] = useState('');
+  const [water, setwater] = useState('');
 
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +30,7 @@ export default function Profile({ navigation }) {
         setProtein(userData.protein ? String(userData.protein) : '');
         setCarbs(userData.carbs ? String(userData.carbs) : '');
         setFats(userData.fats ? String(userData.fats) : '');
+        setwater(userData.water ? String(userData.water) : '');
       }
 
       setTimeout(() => {
@@ -47,7 +49,8 @@ export default function Profile({ navigation }) {
       calories: parseInt(calories), 
       protein: parseFloat(protein), 
       carbs: parseFloat(carbs), 
-      fats: parseFloat(fats) 
+      fats: parseFloat(fats),
+      water: parseFloat(water) 
     };
 
     await AsyncStorage.setItem('userData', JSON.stringify(userData));
@@ -126,6 +129,14 @@ export default function Profile({ navigation }) {
             value={fats}
             onChangeText={(text) => setFats(text.replace(/[^0-9.]/g, ''))}
             label="Fats (g)"
+            keyboardType="numeric"
+            mode="outlined"
+          />
+          <TextInput
+            style={styles.input}
+            value={water}
+            onChangeText={(text) => setwater(text.replace(/[^0-9.]/g, ''))}
+            label="Water (ml)"
             keyboardType="numeric"
             mode="outlined"
           />

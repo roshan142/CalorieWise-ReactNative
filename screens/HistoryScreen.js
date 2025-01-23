@@ -24,19 +24,19 @@ export default function HistoryScreen({ navigation }) {
     fetchHistory();
   }, []);
 
-  // Function to aggregate history by date
   const aggregateHistory = (entries) => {
     const aggregated = {};
 
     entries.forEach(entry => {
-      const { date, calories, protein, carbs, fats } = entry;
+      const { date, calories, protein, carbs, fats,water } = entry;
       if (!aggregated[date]) {
-        aggregated[date] = { date, calories: 0, protein: 0, carbs: 0, fats: 0 };
+        aggregated[date] = { date, calories: 0, protein: 0, carbs: 0, fats: 0,water:0 };
       }
       aggregated[date].calories += calories;
       aggregated[date].protein += protein;
       aggregated[date].carbs += carbs;
       aggregated[date].fats += fats;
+      aggregated[date].water += water;
     });
 
     return Object.values(aggregated);
@@ -61,6 +61,7 @@ export default function HistoryScreen({ navigation }) {
                 <Paragraph>Protein: {entry.protein}g</Paragraph>
                 <Paragraph>Carbs: {entry.carbs}g</Paragraph>
                 <Paragraph>Fats: {entry.fats}g</Paragraph>
+                <Paragraph>Water: {entry.water}ml</Paragraph>
               </Card.Content>
             </Card>
           ))

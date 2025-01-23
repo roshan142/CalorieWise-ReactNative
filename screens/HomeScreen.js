@@ -12,19 +12,33 @@ export default function HomeScreen({ navigation }) {
     dinner: [],
   });
   const [totals, setTotals] = useState({ calories: 0, protein: 0, carbs: 0, fats: 0 });
-  const [userData, setUserData] = useState({ name: '', calories: 0, protein: 0, carbs: 0, fats: 0 });
+  const [userData, setUserData] = useState({ name: '', calories: 0, protein: 0, carbs: 0, fats: 0,water:0 });
+  const [waterIntake, setWaterIntake] = useState(0);
 
   useEffect(() => {
+
     const checkForStoredValue = async () => {
       const storedValue = await AsyncStorage.getItem('userData');
       if (!storedValue) {
         navigation.navigate('Input');
       }
+      else {
+        
+        const waterdata = await AsyncStorage.getItem('waterIntake');
+        const parsedData = JSON.parse(waterdata)
+        const storedUserData = await AsyncStorage.getItem('userData');
+        if (storedUserData) {
+          const userData = JSON.parse(storedUserData);
+          setUserData(userData);
+          setWaterIntake(parsedData.water);
+        } 
+      }
     };
-
-    
-    const fetchMeals = async () => {
       checkForStoredValue();
+  }, []);
+
+  useEffect(() => {
+    const fetchMeals = async () => {
       try {
         const savedMeals = await AsyncStorage.multiGet(['meals_breakfast', 'meals_lunch', 'meals_snack', 'meals_dinner']);
         const mealData = {
@@ -33,27 +47,14 @@ export default function HomeScreen({ navigation }) {
           snack: JSON.parse(savedMeals[2][1]) || [],
           dinner: JSON.parse(savedMeals[3][1]) || [],
         };
-    
         setMeals(mealData);
         calculateTotals(mealData);
-
-        const storedUserData = await AsyncStorage.getItem('userData');
-        if (storedUserData) {
-          const userData = JSON.parse(storedUserData);
-          setUserData(userData);
-        }
-        
         await removeInvalidMealsFromCategories();
-  
       } catch (error) {
-        Alert.alert('Error', 'Failed to fetch meals');
+        Alert.alert('Error', 'Failed to fetch meals',error);
       }
     };
-      
     fetchMeals();
-    const intervalId = setInterval(fetchMeals, 1000);
-  
-    return () => clearInterval(intervalId);
   }, []);
 
   const calculateTotals = (mealsData) => {
@@ -89,11 +90,9 @@ export default function HomeScreen({ navigation }) {
   };
   
   const savebutton = () => {
-    if (totals.calories === 0 && totals.protein === 0 && totals.carbs === 0 && totals.fats === 0) {
-      console.log("All are zero")
+    if (totals.calories === 0 && totals.protein === 0 && totals.carbs === 0 && totals.fats === 0 && waterIntake === 0) {
       return;
     }
-    console.log("Saved")
     saveDailyTotals();
     resetMeals();
   };
@@ -107,6 +106,7 @@ export default function HomeScreen({ navigation }) {
         protein: totals.protein,
         carbs: totals.carbs,
         fats: totals.fats,
+        water: waterIntake
       };
       const existingHistory = await AsyncStorage.getItem('mealHistory');
       let historyArray = existingHistory ? JSON.parse(existingHistory) : [];
@@ -128,9 +128,25 @@ export default function HomeScreen({ navigation }) {
       await AsyncStorage.multiRemove(['meals_breakfast', 'meals_lunch', 'meals_snack', 'meals_dinner']);
       setMeals({ breakfast: [], lunch: [], snack: [], dinner: [] });
       setTotals({ calories: 0, protein: 0, carbs: 0, fats: 0 });
+      setWaterIntake(0);
+      const water = {water: 0};
+      await AsyncStorage.setItem('waterIntake', JSON.stringify(water));
     } catch (error) {
       Alert.alert('Error', 'Failed to reset meal data');
     }
+  };
+
+  const handleAddWater = async (amount) => {
+    const updatedWaterIntake = waterIntake + amount;
+
+    if (updatedWaterIntake < 0) {
+      return;
+    }
+
+    setWaterIntake(updatedWaterIntake);
+    const water = {water: updatedWaterIntake};
+    await AsyncStorage.setItem('waterIntake', JSON.stringify(water)); 
+    
   };
 
   const renderMealCard = (mealType, title) => (
@@ -158,6 +174,7 @@ export default function HomeScreen({ navigation }) {
   const protein_progress = userData.protein ? totals.protein / userData.protein : 0;
   const carbs_progress = userData.carbs ? totals.carbs / userData.carbs : 0;
   const fats_progress = userData.fats ? totals.fats / userData.fats: 0;
+  const waterProgress = userData.water ? Math.min(Math.max(waterIntake / userData.water, 0), 1) : 0;
   const todayDate = moment().format('dddd, MMMM D, YYYY');
   
   return (
@@ -180,13 +197,34 @@ export default function HomeScreen({ navigation }) {
           style={styles.progressBar}
         />
         <Text style={styles.progressText}>
-          {totals[nutrient.toLowerCase()]} / {userData[nutrient.toLowerCase()]} {nutrient} 
-          ({Math.round((nutrient === 'Calories' ? calorie_progress : nutrient === 'Protein' ? protein_progress : nutrient === 'Carbs' ? carbs_progress : fats_progress) * 100)}%)
+          {totals[nutrient.toLowerCase()]} / {userData[nutrient.toLowerCase()]}{nutrient === 'Calories' ? "Cal " : "g "}
+        ({Math.round((nutrient === 'Calories' ? calorie_progress : nutrient === 'Protein' ? protein_progress : nutrient === 'Carbs' ? carbs_progress : fats_progress) * 100)}%)
         </Text>
       </View>
     ))}
         </Card.Content>
       </Card>
+
+      <Card style={styles.waterCard}>
+  <Card.Title
+    title="Water Intake"
+    left={(props) => <Avatar.Icon {...props} icon="cup-water" />}
+  />
+  <Card.Content>
+    <View style={styles.progressBarContainer}>
+      <Text style={styles.progressTitle}>Here 1 cup = 250ml</Text>
+      <ProgressBar progress={waterProgress} color="green" style={styles.progressBar} />
+      <Text style={styles.progressText}>
+        {Math.floor(waterIntake / 250)} cups / {Math.floor(userData.water / 250)} cups ({Math.round(waterProgress * 100)}%)
+      </Text>
+    </View>
+  </Card.Content>
+  <Card.Actions>
+    <Button mode="contained" onPress={() => handleAddWater(-250)} style={styles.waterButton}>-1 Cup</Button>
+    <Button mode="contained" onPress={() => handleAddWater(250)} style={styles.waterButton}>+1 Cup</Button>
+  </Card.Actions>
+</Card>
+
       
       <View style={styles.mealsContainer}>
         {renderMealCard('breakfast', 'Breakfast')}
@@ -205,6 +243,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  waterCard: {
+    margin: 16,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    elevation: 6,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  waterButton: {
+    marginHorizontal: 8,
   },
   mealsContainer: {
     paddingHorizontal: 16,
