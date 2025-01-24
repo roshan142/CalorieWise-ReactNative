@@ -68,9 +68,9 @@ export default function Profile({ navigation }) {
 
   return (
     <ScrollView className=" bg-gray-100 p-2 ">
-      <Card className="bg-white mb-12 rounded-8 shadow-4">
+      <Card className="bg-white mb-6 mt-5 rounded-8 shadow-4">
         <Card.Content>
-          <Title className="text-18 font-bold mb-12 text-gray-700">Profile Information</Title>
+          <Title className="text-2xl font-bold mb-6 text-gray-700">Profile Information</Title>
           <TextInput
             className="mb-5 bg-white"
             value={name}
@@ -97,9 +97,9 @@ export default function Profile({ navigation }) {
         </Card.Content>
       </Card>
 
-      <Card className="bg-white mb-6 rounded-8 shadow-4">
+      <Card className="bg-white mb-6 rounded shadow-4">
         <Card.Content>
-          <Title className="text-18 font-bold mb-12 text-gray-700">Daily Macros</Title>
+          <Title className="text-2xl font-bold mb-6 text-gray-700">Daily Macros</Title>
           <TextInput
             className="mb-5 bg-white"
             value={calories}
@@ -142,8 +142,9 @@ export default function Profile({ navigation }) {
           />
         </Card.Content>
       </Card>
-      <Button mode="contained" onPress={handleSave} className="my-5 py-5 mx-6 rounded-8 bg-green-500" labelStyle={{fontSize:22,fontWeight:"bold"}}>
-        SAVE
+      <Button mode="contained" onPress={handleSave} className="my-5 py-3 mx-6 rounded-8 bg-green-500" labelStyle={{fontSize:22,fontWeight:"bold"}}>
+        <Text className="text-2xl">SAVE</Text>
+        
       </Button>
     </ScrollView>
   );

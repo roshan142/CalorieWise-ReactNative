@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { Button, Card, Title, Text, useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -20,22 +20,22 @@ export default function Setting({ navigation }) {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Title style={[styles.pageTitle, { color: theme.colors.primary }]}>
+    <ScrollView className="flex-1 p-5 bg-gray-100 ">
+      <Title className="text-3xl font-bold mb-5 text-center" style={{ color: theme.colors.primary }}>
         Settings
       </Title>
 
       {isLoading ? (
-        <View style={styles.loaderContainer}>
+        <View className="flex-1 items-center justify-center my-50">
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={styles.loaderText}>Resetting Data...</Text>
+          <Text className="mt-10 text-base text-[#777]">Resetting Data...</Text>
         </View>
       ) : (
         <>
-        <Card style={styles.card}>
+        <Card className="mb-5 rounded-12 border bg-white">
             <Card.Content>
-              <Title style={styles.sectionTitle}>API Meal Data</Title>
-              <Text style={styles.cardText}>
+              <Title className="text-2xl font-bold mb-2 text-[#333]">API Meal Data</Title>
+              <Text className="text-xl text-[#555] mb-1">
                 Add Meals from online sources.
               </Text>
             </Card.Content>
@@ -44,17 +44,17 @@ export default function Setting({ navigation }) {
                 mode="contained"
                 onPress={() => navigation.navigate('ApiMeal')}
                 icon="plus"
-                style={styles.actionButton}
+                className="flex-1 m-4 rounded-lg py-2"
               >
-                ADD
+                <Text className="text-white text-base font-bold">ADD</Text>
               </Button>
             </Card.Actions>
           </Card>
 
-        <Card style={styles.card}>
+        <Card className="mb-5 rounded-12 border bg-white">
             <Card.Content>
-              <Title style={styles.sectionTitle}>History</Title>
-              <Text style={styles.cardText}>
+              <Title className="text-2xl font-bold mb-2 text-[#333]">History</Title>
+              <Text className="text-xl text-[#555] mb-1">
                 View your meal history, including calorie data.
               </Text>
             </Card.Content>
@@ -63,47 +63,50 @@ export default function Setting({ navigation }) {
                 mode="contained"
                 onPress={() => navigation.navigate('History')}
                 icon="history"
-                style={styles.actionButton}
+                className="flex-1 m-4 rounded-lg py-2"
               >
-                View History
+                <Text className="text-white text-base font-bold">View History</Text>
               </Button>
             </Card.Actions>
           </Card>
 
-          <Card style={[styles.card, { borderColor: theme.colors.primary }]}>
+          <Card className="mb-5 rounded-12 border bg-white" style={{ borderColor: theme.colors.primary }}>
             <Card.Content>
-              <Title style={styles.sectionTitle}>Reset Options</Title>
+              <Title className="text-2xl font-bold mb-2 text-[#333]">Reset Options</Title>
               <Button
                 mode="outlined"
                 onPress={() => AsyncStorage.removeItem('mealHistory')}
-                style={styles.resetButton}
+                className="my-4 rounded-lg py-2"
                 icon="history"
               >
+                <Text className="text-[#6750a4] text-base font-bold">
                 Reset Calorie History
+                </Text>
               </Button>
               <Button
                 mode="outlined"
                 onPress={() => AsyncStorage.removeItem('meals')}
-                style={styles.resetButton}
+                className="my-4 rounded-lg py-2"
                 icon="food"
               >
-                Reset Meals
+                <Text className="text-[#6750a4] text-base font-bold">Reset Meals</Text>
+                
               </Button>
               <Button
                 mode="contained"
                 onPress={resetData}
-                style={styles.resetButton}
+                className="my-4 rounded-lg py-2"
                 icon="alert-circle"
               >
-                Reset All Data
+                <Text className="text-white text-base font-bold">Reset All Data</Text>
               </Button>
             </Card.Content>
           </Card>
 
-          <Card style={styles.card}>
+          <Card className="mb-10 rounded-12 border bg-white">
             <Card.Content>
-              <Title style={styles.sectionTitle}>Developer Mode</Title>
-              <Text style={styles.cardText}>
+              <Title className="text-2xl font-bold mb-2 text-[#333]">Developer Mode</Title>
+              <Text className="text-xl text-[#555] mb-1">
                 Access developer features and test data.
               </Text>
             </Card.Content>
@@ -112,7 +115,7 @@ export default function Setting({ navigation }) {
                 mode="contained"
                 onPress={() => navigation.navigate('Developermode')}
                 icon="code-tags"
-                style={styles.actionButton}
+                className="flex-1 m-4 rounded-8"
               >
                 Open Developer Mode
               </Button>
@@ -123,56 +126,3 @@ export default function Setting({ navigation }) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f9f9f9',
-  },
-  pageTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  card: {
-    marginBottom: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    elevation: 3,
-    backgroundColor: '#ffffff',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#333',
-  },
-  cardText: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 8,
-  },
-  resetButton: {
-    marginVertical: 8,
-    borderRadius: 8,
-    paddingVertical: 6,
-  },
-  actionButton: {
-    flex: 1,
-    margin: 4,
-    borderRadius: 8,
-  },
-  loaderContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 50,
-  },
-  loaderText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#777',
-  },
-});

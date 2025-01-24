@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import { Card, Divider, Subheading, useTheme, Avatar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BarChart } from 'react-native-chart-kit';
@@ -91,7 +91,7 @@ export default function Overview({ navigation }) {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-800 ">
+      <View className="flex-1 justify-center items-center bg-gray-300 ">
         <ActivityIndicator size="large" color={colors.primary} />
         <Text className="mt-10 text-base text-gray-600">Fetching data...</Text>
       </View>
