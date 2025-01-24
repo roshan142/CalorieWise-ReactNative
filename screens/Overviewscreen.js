@@ -59,69 +59,74 @@ export default function Overview({ navigation }) {
     {
       title: "Calorie Intake",
       data: caloriesData,
-      color: '#FF7043',
+      color: '#FF7043', // Vibrant orange for energy (calories)
       target: targetCalories,
     },
     {
       title: "Protein Intake",
       data: proteinsData,
-      color: '#66BB6A',
+      color: '#4CAF50', // Fresh green for proteins (healthy and natural)
       target: targetProteins,
     },
     {
       title: "Fats Intake",
       data: fatsData,
-      color: '#42A5F5',
+      color: '#FFCA28', // Yellow for fats (rich, buttery feel)
       target: targetFats,
     },
     {
       title: "Carbs Intake",
       data: carbsData,
-      color: '#FFA726',
+      color: '#29B6F6', // Light blue for carbs (energy and hydration)
       target: targetCarbs,
     },
     {
       title: "Water Intake",
       data: waterData,
-      color: '#FFA726',
+      color: '#42A5F5', // Clear blue for water (freshness)
       target: targetWater,
     },
   ];
+  
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View className="flex-1 justify-center items-center bg-gray-800 ">
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>Fetching data...</Text>
+        <Text className="mt-10 text-base text-gray-600">Fetching data...</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Card style={styles.overviewCard}>
+    <ScrollView className="flex-1 p-4 bg-blue-100">
+      <Card className="mb-1 rounded-2 bg-white p-6 ">
         <Card.Title
           title="Weekly Overview"
-          titleStyle={styles.overviewTitle}
+          titleStyle={{
+            fontSize: 22,
+            fontWeight: 'bold',
+            color: '#333',
+          }}
           left={(props) => <Avatar.Icon {...props} icon="chart-bar" />}
         />
       </Card>
 
       {historyData.length === 0 ? (
-        <View style={styles.noDataOverlay}>
-          <Text style={styles.noDataOverlayText}>No Data Available</Text>
+        <View className="flex-1 justify-center items-center mt-20">
+          <Text className="text-xl font-bold text-gray-400">No Data Available</Text>
         </View>
       ) : (
         charts.map((chart, index) => (
-          <Card key={index} style={styles.card}>
+          <Card key={index} className="my-3 rounded-12 bg-white">
             <Card.Content>
-              <Subheading style={[styles.title, { color: chart.color }]}>{chart.title}</Subheading>
+              <Subheading className="text-center text-xl font-bold" style={[{ color: chart.color }]}>{chart.title}</Subheading>
               <BarChart
                 data={{
                   labels,
                   datasets: [{ data: chart.data }],
                 }}
-                width={screenWidth - 48}
+                width={screenWidth - 53}
                 height={250}
                 yAxisSuffix={chart.title.includes('Calorie') ? ' cal' : chart.title.includes('Water') ? ' ml' : ' g'}
                 fromZero
@@ -133,11 +138,11 @@ export default function Overview({ navigation }) {
                   color: () => chart.color,
                   labelColor: () => '#333',
                 }}
-                style={styles.chart}
+                className="my-2 rounded-12"
               />
-              <Divider style={styles.divider} />
-              <Text style={styles.targetLabel}>
-                Target: {chart.target} {chart.title.includes('Calorie') ? 'cal' : chart.title.includes('Water') ? 'ml' :  'g'}
+              <Divider className="my-2 text-gray-300"/>
+              <Text className="text-center text-base text-gray-400">
+                Target: <Text className="font-bold">{chart.target} {chart.title.includes('Calorie') ? 'cal' : chart.title.includes('Water') ? 'ml' :  'g'}</Text>
               </Text>
             </Card.Content>
           </Card>
@@ -147,68 +152,3 @@ export default function Overview({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#e3f2fd',
-    padding: 16,
-  },
-  overviewCard: {
-    marginBottom: 16,
-    borderRadius: 12,
-    backgroundColor: '#ffffff',
-    elevation: 4,
-    padding: 16,
-  },
-  overviewTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  card: {
-    marginVertical: 10,
-    borderRadius: 12,
-    elevation: 2,
-    backgroundColor: '#ffffff',
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  chart: {
-    marginVertical: 8,
-    borderRadius: 12,
-  },
-  targetLabel: {
-    textAlign: 'center',
-    fontSize: 14,
-    color: '#757575',
-  },
-  noDataOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  noDataOverlayText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#9e9e9e',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#616161',
-  },
-  divider: {
-    marginVertical: 8,
-    backgroundColor: '#eeeeee',
-  },
-});

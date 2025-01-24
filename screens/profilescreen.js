@@ -59,27 +59,27 @@ export default function Profile({ navigation }) {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View className="flex-1 justify-center items-center bg-green-50">
         <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>Loading...</Text>
+        <Text className="mt-10 text-10 text-gray-800">Loading...</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Card style={styles.card}>
+    <ScrollView className=" bg-gray-100 p-2 ">
+      <Card className="bg-white mb-12 rounded-8 shadow-4">
         <Card.Content>
-          <Title style={styles.sectionTitle}>Profile Information</Title>
+          <Title className="text-18 font-bold mb-12 text-gray-700">Profile Information</Title>
           <TextInput
-            style={styles.input}
+            className="mb-5 bg-white"
             value={name}
             onChangeText={setName}
             label="Name"
             mode="outlined"
           />
           <TextInput
-            style={styles.input}
+            className="mb-5 bg-white"
             value={age}
             onChangeText={(text) => setAge(text.replace(/[^0-9]/g, ''))}
             label="Age"
@@ -87,7 +87,7 @@ export default function Profile({ navigation }) {
             mode="outlined"
           />
           <TextInput
-            style={styles.input}
+            className="mb-5 bg-white"
             value={weight}
             onChangeText={(text) => setWeight(text.replace(/[^0-9.]/g, ''))}
             label="Weight (kg)"
@@ -97,11 +97,11 @@ export default function Profile({ navigation }) {
         </Card.Content>
       </Card>
 
-      <Card style={styles.card}>
+      <Card className="bg-white mb-6 rounded-8 shadow-4">
         <Card.Content>
-          <Title style={styles.sectionTitle}>Daily Macros</Title>
+          <Title className="text-18 font-bold mb-12 text-gray-700">Daily Macros</Title>
           <TextInput
-            style={styles.input}
+            className="mb-5 bg-white"
             value={calories}
             onChangeText={(text) => setCalories(text.replace(/[^0-9]/g, ''))}
             label="Calories"
@@ -109,7 +109,7 @@ export default function Profile({ navigation }) {
             mode="outlined"
           />
           <TextInput
-            style={styles.input}
+            className="mb-5 bg-white"
             value={protein}
             onChangeText={(text) => setProtein(text.replace(/[^0-9.]/g, ''))}
             label="Protein (g)"
@@ -117,7 +117,7 @@ export default function Profile({ navigation }) {
             mode="outlined"
           />
           <TextInput
-            style={styles.input}
+            className="mb-5 bg-white"
             value={carbs}
             onChangeText={(text) => setCarbs(text.replace(/[^0-9.]/g, ''))}
             label="Carbs (g)"
@@ -125,7 +125,7 @@ export default function Profile({ navigation }) {
             mode="outlined"
           />
           <TextInput
-            style={styles.input}
+            className="mb-5 bg-white"
             value={fats}
             onChangeText={(text) => setFats(text.replace(/[^0-9.]/g, ''))}
             label="Fats (g)"
@@ -133,7 +133,7 @@ export default function Profile({ navigation }) {
             mode="outlined"
           />
           <TextInput
-            style={styles.input}
+            className="mb-5 bg-white"
             value={water}
             onChangeText={(text) => setwater(text.replace(/[^0-9.]/g, ''))}
             label="Water (ml)"
@@ -142,56 +142,10 @@ export default function Profile({ navigation }) {
           />
         </Card.Content>
       </Card>
-      <Button mode="contained" onPress={handleSave} style={styles.saveButton} labelStyle={{fontSize:17,fontWeight:"bold"}}>
+      <Button mode="contained" onPress={handleSave} className="my-5 py-5 mx-6 rounded-8 bg-green-500" labelStyle={{fontSize:22,fontWeight:"bold"}}>
         SAVE
       </Button>
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  card: {
-    marginBottom: 16,
-    borderRadius: 8,
-    elevation: 4,
-    backgroundColor: '#fff',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#3e3e3e',
-  },
-  input: {
-    marginBottom: 16,
-    backgroundColor: 'white',
-  },
-  saveButton: {
-    marginVertical: 20,
-    paddingVertical: 10,
-    marginHorizontal: 16,
-    borderRadius: 8,
-    backgroundColor:"#4CAF50"
-  },
-  resetButton: {
-    marginVertical: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#757575',
-  },
-});

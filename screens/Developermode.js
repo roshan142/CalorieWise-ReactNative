@@ -27,6 +27,7 @@ export default function Developermode({ navigation }) {
           protein: 100 + i * 10,
           carbs: 200 + i * 15,
           fats: 60 + i * 5,
+          water: 1000 + i*5,
         };
   
         predefinedData.push(historyData);
