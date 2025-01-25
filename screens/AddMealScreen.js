@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Alert } from 'react-native';
+import {View, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TextInput, Button, Card, Title, Paragraph,Appbar } from 'react-native-paper';
+import { TextInput, Button, Card, Title,FAB,Text } from 'react-native-paper';
 
 const max = 10000;
 
@@ -49,21 +49,16 @@ export default function AddMealScreen({ route,navigation }) {
   };
 
   return (
-    <ScrollView>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => fromtab()} />
-        <Appbar.Content title="Go Back" />
-      </Appbar.Header>
-      
-      <Card style={styles.card}>
+    <View className="flex-1 justify-center">
+      <Card className="rounded-lg bg-gray-50">
         <Card.Content>
-          <Title style={styles.title}>Add a New Meal</Title>
+          <Title className="text-3xl font-bold mb-1 text-center">Add a New Meal</Title>
           <TextInput
             mode="outlined"
             label="Meal Name"
             value={mealName}
             onChangeText={setMealName}
-            style={styles.input}
+            className="mb-3"
           />
           <TextInput
             mode="outlined"
@@ -71,7 +66,7 @@ export default function AddMealScreen({ route,navigation }) {
             keyboardType="numeric"
             value={calories}
             onChangeText={setCalories}
-            style={styles.input}
+            className="mb-3"
           />
           <TextInput
             mode="outlined"
@@ -79,7 +74,7 @@ export default function AddMealScreen({ route,navigation }) {
             keyboardType="numeric"
             value={protein}
             onChangeText={setProtein}
-            style={styles.input}
+            className="mb-3"
           />
           <TextInput
             mode="outlined"
@@ -87,7 +82,7 @@ export default function AddMealScreen({ route,navigation }) {
             keyboardType="numeric"
             value={carbs}
             onChangeText={setCarbs}
-            style={styles.input}
+            className="mb-3"
           />
           <TextInput
             mode="outlined"
@@ -95,39 +90,22 @@ export default function AddMealScreen({ route,navigation }) {
             keyboardType="numeric"
             value={fats}
             onChangeText={setFats}
-            style={styles.input}
+            className="mb-3"
           />
         </Card.Content>
-        <Card.Actions style={styles.actions}>
-          <Button mode="contained" onPress={addMeal} style={styles.button}>
-            Add Meal
-          </Button>
-        </Card.Actions>
       </Card>
-    </ScrollView>
+      <FAB
+          icon="keyboard-backspace"
+          className="absolute m-4 left-0 bottom-0 bg-green-500"
+          onPress={() => fromtab()}
+        />
+        <FAB
+          icon="check"
+          className="absolute m-4 right-0 bottom-0 bg-green-500"
+          onPress={addMeal}
+        />
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 8,
-    elevation: 4,
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  input: {
-    marginBottom: 16,
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    padding: 16,
-  },
-  button: {
-    width: '100%',
-  },
-});
+

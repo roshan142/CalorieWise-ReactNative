@@ -1,6 +1,5 @@
-// screens/HistoryScreen.js
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, StyleSheet, Alert } from 'react-native';
+import { ScrollView, View, Alert } from 'react-native';
 import { Appbar, Card, Title, Paragraph } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -43,18 +42,17 @@ export default function HistoryScreen({ navigation }) {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView className="flex-1 bg-[#f5f5f5]">
       <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="History" />
       </Appbar.Header>
 
-      <View style={styles.historyContainer}>
+      <View className="p-3">
         {history.length === 0 ? (
           <Paragraph>No history available</Paragraph>
         ) : (
           history.map((entry, index) => (
-            <Card key={index} style={styles.historyCard}>
+            <Card key={index} className="mb-6 rounded-8">
               <Card.Content>
                 <Title>{entry.date}</Title>
                 <Paragraph>Calories: {entry.calories}</Paragraph>
@@ -70,18 +68,3 @@ export default function HistoryScreen({ navigation }) {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  historyContainer: {
-    padding: 16,
-  },
-  historyCard: {
-    marginBottom: 16,
-    borderRadius: 8,
-    elevation: 4,
-  },
-});

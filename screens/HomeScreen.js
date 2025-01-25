@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, StyleSheet, Alert } from 'react-native';
-import { Card, Button, Title, Paragraph, ProgressBar, Divider, Avatar } from 'react-native-paper';
+import { ScrollView, View, Text, Alert } from 'react-native';
+import { Card, Button, Title, Paragraph, ProgressBar, Divider, Avatar, IconButton } from 'react-native-paper';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -149,26 +149,29 @@ export default function HomeScreen({ navigation }) {
     setWaterIntake(updatedWaterIntake);
     const water = {water: updatedWaterIntake};
     await AsyncStorage.setItem('waterIntake', JSON.stringify(water)); 
+    const todayDate = moment().format('D MMM YYYY');
+    await AsyncStorage.setItem('MealAddedDate', todayDate)
     
   };
 
   const renderMealCard = (mealType, title) => (
-    <Card style={styles.mealCard} key={mealType}>
+    <Card className="mb-6 rounded-10 bg-white" key={mealType}>
       <Card.Content>
-        <Title style={styles.mealTitle}>{title}</Title>
+        <Title className="text-xl font-bold text-[#333] mb-2 ">{title}</Title>
         {(meals[mealType] || []).length > 0 ? (
           (meals[mealType] || []).map((meal, index) => (
-            <Paragraph key={index} style={styles.mealText}>
-              {meal.name} - Qty: {meal.quantity}, Calories: {meal.calories}, Protein: {meal.protein}g, Carbs: {meal.carbs}g, Fats: {meal.fats}g 
+            <Paragraph key={index} className="text-base my-2 text-[#555]">
+              <Text className="font-bold">
+              {meal.name}</Text> {"\n"}Qty: <Text className="font-bold">{meal.quantity}</Text>, Calories: <Text className="font-bold">{meal.calories}cal</Text>, Protein: <Text className="font-bold">{meal.protein}g</Text>, Carbs: <Text className="font-bold">{meal.carbs}g</Text>, Fats: <Text className="font-bold">{meal.fats}g</Text> 
             </Paragraph>
           ))
         ) : (
-          <Paragraph style={styles.noMealsText}>No meals added</Paragraph>
+          <Paragraph className="font-bold text-base text-[#999] text-center my-1">No meals added</Paragraph>
         )}
       </Card.Content>
-      <Card.Actions style={styles.cardActions}>
-        <Button mode="outlined" onPress={() => AsyncStorage.removeItem(`meals_${mealType}`)}>Clear</Button>
-        <Button mode="contained" onPress={() => navigation.navigate('AddCategoryMealScreen', { category: mealType })} icon="plus-circle">Add Meal</Button>
+      <Card.Actions className="justify-between mt-2">
+        <IconButton mode='contained' className="bg-white" onPress={() => AsyncStorage.removeItem(`meals_${mealType}`)} icon="delete-forever" size={30} iconColor='red'></IconButton>
+        <IconButton className="bg-white" onPress={() => navigation.navigate('AddCategoryMealScreen', { category: mealType })} icon="plus-circle" size={30} iconColor='black'></IconButton>
       </Card.Actions>
     </Card>
   );
@@ -181,26 +184,27 @@ export default function HomeScreen({ navigation }) {
   const todayDate = moment().format('dddd, MMMM D, YYYY');
   
   return (
-    <ScrollView style={styles.container}>
-      <Card style={styles.overviewCard}>
+    <ScrollView className="flex-1 bg-[#F5F5F5]">
+      <Card className="rounded-10 bg-white p-1 m-5 mx-3">
         <Card.Title
           title="Today's Overview"
           left={(props) => <Avatar.Icon {...props} icon="calendar-today" />}
         />
         <Card.Content>
-          <Title style={styles.overviewTitle}>Calorie and Nutrient Goals</Title>
-          <Text style={styles.dateText}>{todayDate}</Text>
-          <Divider style={styles.divider} />
+          <Title className="text-xl font-bold text-[#333] mb-4">Calorie and Nutrient Goals</Title>
+          <Text className="font-bold text-lg text-[#555] mb-2">{todayDate}</Text> 
+
+          <Divider className="my-5 h-0.5 bg-[#E0E0E0]" />
           {['Calories', 'Protein', 'Carbs', 'Fats'].map((nutrient, index) => (
-      <View style={styles.progressBarContainer} key={index}>
-        <Text style={styles.progressTitle}>{nutrient}</Text>
+      <View key={index}>
+        <Text className="text-base font-bold mb-4 text-[#555]">{nutrient}</Text>
         <ProgressBar 
           progress={nutrient === 'Calories' ? calorie_progress : nutrient === 'Protein' ? protein_progress : nutrient === 'Carbs' ? carbs_progress : fats_progress} 
-          color={totals[nutrient.toLowerCase()] > userData[nutrient.toLowerCase()] ? 'red' : 'green'}  
-          style={styles.progressBar}
+          color={totals[nutrient.toLowerCase()] > userData[nutrient.toLowerCase()] ? 'red' : nutrient === 'Calories' ? '#FF7043' : nutrient === 'Protein' ? '#4CAF50' : nutrient === 'Carbs' ? '#29B6F6' : nutrient === 'Fats' ? '#FFCA28' :''}  
+          className="h-3 rounded-full bg-[#E0E0E0]"
         />
-        <Text style={styles.progressText}>
-          {totals[nutrient.toLowerCase()]} / {userData[nutrient.toLowerCase()]}{nutrient === 'Calories' ? "Cal " : "g "}
+        <Text className="text-base text-center mt-4 text-[#333]">
+          {totals[nutrient.toLowerCase()]} / <Text className="font-bold">{userData[nutrient.toLowerCase()]}{nutrient === 'Calories' ? "Cal " : "g "}</Text>
         ({Math.round((nutrient === 'Calories' ? calorie_progress : nutrient === 'Protein' ? protein_progress : nutrient === 'Carbs' ? carbs_progress : fats_progress) * 100)}%)
         </Text>
       </View>
@@ -208,164 +212,37 @@ export default function HomeScreen({ navigation }) {
         </Card.Content>
       </Card>
 
-      <Card style={styles.waterCard}>
+      <Card className="m-3 rounded-10 bg-white p-2">
   <Card.Title
     title="Water Intake"
     left={(props) => <Avatar.Icon {...props} icon="cup-water" />}
   />
   <Card.Content>
-    <View style={styles.progressBarContainer}>
-      <Text style={styles.progressTitle}>Here 1 cup = 250ml</Text>
-      <ProgressBar progress={waterProgress} color="green" style={styles.progressBar} />
-      <Text style={styles.progressText}>
-        {Math.floor(waterIntake / 250)} cups / {Math.floor(userData.water / 250)} cups ({Math.round(waterProgress * 100)}%)
+    <View className="my-1">
+      <Text className="text-base font-bold mb-4 text-[#555]">Here 1 cup = 250ml</Text>
+      <ProgressBar progress={waterProgress} color="#42A5F5" className="h-3 rounded-full bg-[#E0E0E0]" />
+      <Text className="text-base text-center mt-4 text-[#333]">
+        {Math.floor(waterIntake / 250)} Cups / <Text className="font-bold">{Math.floor(userData.water / 250)} Cups</Text> ({Math.round(waterProgress * 100)}%)
       </Text>
     </View>
   </Card.Content>
   <Card.Actions>
-    <Button mode="contained" onPress={() => handleAddWater(-250)} style={styles.waterButton}>-1 Cup</Button>
-    <Button mode="contained" onPress={() => handleAddWater(250)} style={styles.waterButton}>+1 Cup</Button>
+    <IconButton mode="contained" onPress={() => handleAddWater(-250)} className="mx-8" icon="minus"></IconButton>
+    <IconButton mode="contained" onPress={() => handleAddWater(250)} className="mx-8" icon="plus"></IconButton>
   </Card.Actions>
 </Card>
 
       
-      <View style={styles.mealsContainer}>
+      <View className="px-2 pb-10 bg-gray-200 rounded-xl mx-2 mt-3 py-1 bottom-2">
+        <Text className="text-2xl font-bold text-center pb-2 pt-2">Meals</Text>
         {renderMealCard('breakfast', 'Breakfast')}
         {renderMealCard('lunch', 'Lunch')}
         {renderMealCard('snack', 'Snack')}
-        {renderMealCard('dinner', 'Dinner')}
-        <Button mode="contained" onPress={savebutton} buttonColor='green' style={styles.saveButton} labelStyle={{fontSize:17,fontWeight:"bold"}}>SAVE</Button>
+        {renderMealCard('dinner', 'Dinner')} 
+        <Button mode="contained" onPress={savebutton} buttonColor='green' className="bg-[#4CAF50] p-2 rounded-8 self-center w-11/12 bottom-2" labelStyle={{fontSize:17,fontWeight:"bold"}}>SAVE</Button>
       </View>
-
-
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  waterCard: {
-    margin: 16,
-    borderRadius: 10,
-    backgroundColor: '#FFFFFF',
-    elevation: 6,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  waterButton: {
-    marginHorizontal: 8,
-  },
-  mealsContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    marginHorizontal: 16,
-    marginTop: 8,
-    elevation: 4,
-    paddingVertical: 8,
-  },
-  mealCard: {
-    marginBottom: 16,
-    borderRadius: 10,
-    elevation: 4,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  mealTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  mealText: {
-    fontSize: 14,
-    marginVertical: 2,
-    color: '#555',
-  },
-  noMealsText: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#999',
-    textAlign: 'center',
-    marginVertical: 8,
-  },
-  cardActions: {
-    justifyContent: 'space-between',
-    marginTop: 8,
-  },
-  progressBarContainer: {
-    marginVertical: 10,
-  },
-  progressTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-    color: '#555',
-  },
-  progressText: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 4,
-    color: '#333',
-  },
-  progressBar: {
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#E0E0E0',
-  },
-  overviewCard: {
-    margin: 16,
-    borderRadius: 10,
-    backgroundColor: '#FFFFFF',
-    elevation: 6,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  overviewTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  divider: {
-    marginVertical: 12,
-    height: 1,
-    backgroundColor: '#E0E0E0',
-  },
-  dateText: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#555',
-    marginBottom: 8,
-  },
-  saveButton: {
-    marginTop: 16,
-    backgroundColor: '#4CAF50',
-    padding: 12,
-    borderRadius: 8,
-    alignSelf: 'center',
-    width: '90%',
-  },
-  saveButtonText: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: '#FFF',
-    textAlign: 'center',
-  },
-});
 
 

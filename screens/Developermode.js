@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import React from 'react';
+import { Text, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Appbar, Button, Card, useTheme, Divider } from 'react-native-paper';
+import { Appbar, Button, Card, Divider } from 'react-native-paper';
 import moment from 'moment';
 import jsonData from '../app.json';
 
@@ -9,7 +9,6 @@ const max = 10000;
 
 export default function Developermode({ navigation }) {
   const Version= jsonData.expo.version;
-  const { colors } = useTheme();
 
   const savePredefinedMealHistory = async () => {
     try {
@@ -143,83 +142,35 @@ export default function Developermode({ navigation }) {
 
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView className="flex-1 bg-[#f5f5f5] p16">
       <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Developer Mode" />
       </Appbar.Header>
 
-      <Card style={styles.card}>
+      <Card className="mx-3 mb-5 rounded-10 bg-white">
         <Card.Title title="App Info" />
         <Card.Content>
-          <Text style={styles.infoText}>Version: {Version}</Text>
-          <Text style={styles.infoText}>Environment: {__DEV__ ? 'Development' : 'Production'}</Text>
+          <Text className="text-base mb-8 text-[#333]">Version: {Version}</Text>
+          <Text className="text-base mb-8 text-[#333]">Environment: {__DEV__ ? 'Development' : 'Production'}</Text>
         </Card.Content>
       </Card>
 
-      <Card style={styles.card}>
+      <Card className="mx-3 rounded-10 bg-white">
         <Card.Title title="Predefined Datas" />
         <Card.Content>
-        <Button mode="contained" onPress={savePredefinedMealHistory} style={styles.button}>
+        <Button mode="contained" onPress={savePredefinedMealHistory} className="mb-4" >
         Add History Data
       </Button>
-      <Divider style={styles.divider} />
-      <Button mode="contained" onPress={addPredefinedMeals} style={styles.button}>
+      <Button mode="contained" onPress={addPredefinedMeals} className="mb-4">
         Add Meals Data
       </Button>
-      <Divider style={styles.divider} />
-      <Button mode="contained" onPress={calculateStorageSize} style={styles.button}>
+      <Button mode="contained" onPress={calculateStorageSize} className="mb-4">
         App Data Size
       </Button>
         </Card.Content>
       </Card>
-
-      <Button
-        mode="contained"
-        onPress={() => Alert.alert('Info', 'This is a Developer Mode page')}
-        style={styles.infoButton}
-      >
-        Show Info
-      </Button>
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
-  },
-  card: {
-    marginVertical: 10,
-    borderRadius: 10,
-    elevation: 3,
-    backgroundColor: '#fff',
-  },
-  infoText: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: '#333',
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  switchLabel: {
-    fontSize: 16,
-    color: '#333',
-  },
-  infoButton: {
-    marginTop: 20,
-    paddingVertical: 10,
-    backgroundColor: '#6200ee',
-    borderRadius: 25,
-  },
-  divider: {
-    marginVertical: 8,
-    backgroundColor: '#e0e0e0',
-  },
-});

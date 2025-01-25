@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TextInput, Button, Appbar, Card, Title, Paragraph } from 'react-native-paper';
+import { TextInput, Text, FAB, Card,IconButton } from 'react-native-paper';
 
 export default function EditMealScreen({ route, navigation }) {
-  const { meal } = route.params; // Access the passed meal
+  const { meal } = route.params;
   const [mealName, setMealName] = useState(meal.name);
   const [calories, setCalories] = useState(meal.calories.toString());
   const [protein, setProtein] = useState(meal.protein.toString());
@@ -43,21 +43,19 @@ export default function EditMealScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Edit Meal" />
-      </Appbar.Header>
-
-      <ScrollView contentContainerStyle={styles.content}>
-        <Card style={styles.card}>
+      <View className="flex-1 justify-center">
+        <Card className="m-2 rounded-8 bg-white">
           <Card.Content>
+            <View className="flex-row items-center">
+            <Text className="text-3xl">Edit Meal</Text>
+            <IconButton mode="contained" onPress={deleteMeal} className="bg-white" icon="delete" iconColor='red' size={35}></IconButton>
+            </View>
             <TextInput
               mode="outlined"
               label="Meal Name"
               value={mealName}
               onChangeText={setMealName}
-              style={styles.input}
+              className="mb-2"
             />
             <TextInput
               mode="outlined"
@@ -65,7 +63,7 @@ export default function EditMealScreen({ route, navigation }) {
               keyboardType="numeric"
               value={calories}
               onChangeText={setCalories}
-              style={styles.input}
+              className="mb-2"
             />
             <TextInput
               mode="outlined"
@@ -73,7 +71,7 @@ export default function EditMealScreen({ route, navigation }) {
               keyboardType="numeric"
               value={protein}
               onChangeText={setProtein}
-              style={styles.input}
+              className="mb-2"
             />
             <TextInput
               mode="outlined"
@@ -81,7 +79,7 @@ export default function EditMealScreen({ route, navigation }) {
               keyboardType="numeric"
               value={carbs}
               onChangeText={setCarbs}
-              style={styles.input}
+              className="mb-2"
             />
             <TextInput
               mode="outlined"
@@ -89,50 +87,21 @@ export default function EditMealScreen({ route, navigation }) {
               keyboardType="numeric"
               value={fats}
               onChangeText={setFats}
-              style={styles.input}
+              className="mb-2"
             />
           </Card.Content>
 
-          <Card.Actions style={styles.actions}>
-            <Button mode="contained" onPress={updateMeal} style={styles.button}>
-              Update
-            </Button>
-            <Button mode="contained" onPress={deleteMeal} style={[styles.button, styles.deleteButton]}>
-              Delete
-            </Button>
-          </Card.Actions>
         </Card>
-      </ScrollView>
-    </View>
+          <FAB
+            icon="keyboard-backspace"
+            className="absolute m-4 left-0 bottom-0 bg-green-500"
+            onPress={() => navigation.goBack()}
+          />
+            <FAB
+              icon="check"
+              className="absolute m-4 right-0 bottom-0 bg-green-500"
+              onPress={updateMeal}
+            />
+      </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-  },
-  card: {
-    margin: 16,
-    borderRadius: 8,
-    elevation: 4,
-  },
-  input: {
-    marginBottom: 16,
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 4,
-  },
-  deleteButton: {
-    backgroundColor: 'red',
-  },
-});

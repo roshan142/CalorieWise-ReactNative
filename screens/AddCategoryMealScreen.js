@@ -1,7 +1,7 @@
-import React, { useState, useEffect,  useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, Alert } from 'react-native';
+import React, {useState, useEffect,  useCallback} from 'react';
+import {View, Text, FlatList, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Appbar, Button, Card, TextInput, FAB, Paragraph, useTheme,IconButton  } from 'react-native-paper';
+import {Button, Card, TextInput, FAB, Paragraph, useTheme,IconButton} from 'react-native-paper';
 import moment from 'moment';
 
 export default function AddCategoryMealScreen({ route, navigation }) {
@@ -119,26 +119,21 @@ export default function AddCategoryMealScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => navigation.navigate('Home')} />
-        <Appbar.Content title={`Manage ${category.charAt(0).toUpperCase() + category.slice(1)}`} />
-      </Appbar.Header>
-
+    <View className="flex-1 p-4 bg-[#f9f9f9]">
       {meals.length !==0? (
-      <View style={styles.searchContainer}>
+      <View className="flex-row items-center mt-5">
                 <TextInput
                   mode="outlined"
                   label="Search Meals"
                   value={searchQuery}
                   onChangeText={setSearchQuery}
-                  style={styles.searchBar}
+                  className="flex-1 mr-8"
                 />
-                <Button mode="contained" onPress={handleSearch} style={styles.searchButton}>
+                <Button mode="contained" onPress={handleSearch} className="bg-[#007bff] mx-4">
                   Search
                 </Button>
                 {searchQuery ? (
-                  <Button mode="text" onPress={handleClearSearch} style={styles.clearButton}>
+                  <Button mode="text" onPress={handleClearSearch} className="mx-4 bg-[#f00]">
                     Clear
                   </Button>
                 ) : null}
@@ -146,17 +141,16 @@ export default function AddCategoryMealScreen({ route, navigation }) {
       ):(null)}
 
       {meals.length !==0? (
-        <View style={styles.sortButtonsContainer}>
+        <View className="flex-row justify-around items-center mt-2">
         <Button
           mode={sortOption === 'name' ? 'contained' : 'outlined'}
           onPress={() => setSortOption('name')}
-          style={[
-            styles.sortButton,
-            sortOption === 'name' && styles.selectedButton,
-          ]}
+          className={`flex-1 mx-3 rounded-25 border-1 border-[#007bff] bg-white ${
+            sortOption === 'name' ? 'bg-[#007bff]' : ''
+          }`}
           labelStyle={[
-            styles.sortButtonLabel,
-            sortOption === 'name' && styles.selectedButtonLabel,
+            { color: '#007bff', fontSize: 14, fontWeight: '500' },
+            sortOption === 'name' && { color: '#ffffff' },
           ]}
         >
           A👉Z
@@ -164,16 +158,15 @@ export default function AddCategoryMealScreen({ route, navigation }) {
         <Button
           mode={sortOption === sortOptions[currentSortIndex] ? 'contained' : 'outlined'}
           onPress={cycleSortOption}
-          style={[styles.sortButton, sortOption === sortOptions[currentSortIndex] && styles.selectedButton]}
-          labelStyle={[styles.sortButtonLabel, sortOption === sortOptions[currentSortIndex] && styles.selectedButtonLabel]}
-        >
-          {sortOptions[currentSortIndex][0].toUpperCase() + sortOptions[currentSortIndex].slice(1)} {/* Display option */}
+          className={`flex-1 mx-3 rounded-25 border-1 border-[#007bff] bg-white ${sortOption === sortOptions[currentSortIndex] ? 'bg-[#007bff]' : ''}`}
+          labelStyle={[{ color: '#007bff', fontSize: 14, fontWeight: 'bold' },sortOption === sortOptions[currentSortIndex] && { color: '#ffffff' },]}>
+          {sortOptions[currentSortIndex][0].toUpperCase() + sortOptions[currentSortIndex].slice(1)}
         </Button>
         <Button
           mode="outlined"
           onPress={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
-          style={styles.toggleButton}
-          labelStyle={styles.toggleButtonLabel}
+          className="self-end rounded-20 px-4"
+          labelStyle={{color: '#ffffff',fontSize: 14,fontWeight: '500'}}
         >
           {sortDirection === 'asc' ? '👆' : '👇'}
         </Button>
@@ -182,30 +175,28 @@ export default function AddCategoryMealScreen({ route, navigation }) {
       
 
       {filteredMeals.length === 0 ? (
-        <View style={styles.noDataContainer}>
-          <Text style={styles.noDataText}>No Meal Data Found</Text>
+        <View className="flex-1 justify-center items-center">
+          <Text className="font-bold text-base text-[#95a5a6] text-center">No Meal Data Found</Text>
         </View>
       ) : (
         <FlatList
   data={filteredMeals}
   renderItem={({ item }) => (
-    <Card style={styles.mealCard}>
+    <Card className="my-8 rounded-12 bg-white p-2 mb-0">
       <Card.Content>
-        <View style={styles.mealInfo}>
-          <Text style={styles.mealName}>{item.name}</Text>
-          <Paragraph style={styles.nutrientText}>Calories: {Math.round(item.calories * getMealQuantity(item.id))} cal</Paragraph>
-          <Paragraph style={styles.nutrientText}>Protein: {Math.round(item.protein * getMealQuantity(item.id))}g</Paragraph>
-          <Paragraph style={styles.nutrientText}>Carbs: {Math.round(item.carbs * getMealQuantity(item.id))}g</Paragraph>
-          <Paragraph style={styles.nutrientText}>Fats: {Math.round(item.fats * getMealQuantity(item.id))}g</Paragraph>
-        </View>
-        <View style={styles.quantityContainer}>
+        <View>
+          <View className="flex-row items-center">
+          <Text className="text-xl font-bold text-[#2c3e50]">{item.name}</Text>
+          <IconButton onPress={() => handleMealToggle(item)} className="bg-white" icon={isMealInCategory(item.id) ?"delete" :"plus-circle" } iconColor={isMealInCategory(item.id) ? "red":"black"}></IconButton>
+          </View>
+          <View className="flex-row items-center">
           <IconButton
             icon="minus"
             size={20}
             onPress={() => handleQuantityChange(item, -1)}
             disabled={!isMealInCategory(item.id)}
           />
-          <Text style={styles.quantityText}>{getMealQuantity(item.id)}</Text>
+          <Text className="text-base font-bold">{getMealQuantity(item.id)}</Text>
           <IconButton
             icon="plus"
             size={20}
@@ -213,22 +204,11 @@ export default function AddCategoryMealScreen({ route, navigation }) {
             disabled={!isMealInCategory(item.id)}
           />
         </View>
-        <Button
-          mode={isMealInCategory(item.id) ? "outlined" : "contained"}
-          onPress={() => handleMealToggle(item)}
-          style={[
-            styles.toggleButton,
-            {
-              backgroundColor: isMealInCategory(item.id) ? colors.surface : colors.primary,
-              borderColor: colors.primary,
-            },
-          ]}
-          labelStyle={{
-            color: isMealInCategory(item.id) ? colors.primary : colors.background,
-          }}
-        >
-          {isMealInCategory(item.id) ? "Remove" : "Add"}
-        </Button>
+          <Paragraph className="text-base text-[#7f8c8d]">Calories:<Text className="font-bold"> {Math.round(item.calories * getMealQuantity(item.id))} cal</Text></Paragraph>
+          <Paragraph className="text-base text-[#7f8c8d]">Protein: <Text className="font-bold">{Math.round(item.protein * getMealQuantity(item.id))}g</Text></Paragraph>
+          <Paragraph className="text-base text-[#7f8c8d]">Carbs: <Text className="font-bold">{Math.round(item.carbs * getMealQuantity(item.id))}g</Text></Paragraph>
+          <Paragraph className="text-base text-[#7f8c8d]">Fats: <Text className="font-bold">{Math.round(item.fats * getMealQuantity(item.id))}g</Text></Paragraph>
+        </View>
       </Card.Content>
     </Card>
   )}
@@ -239,145 +219,13 @@ export default function AddCategoryMealScreen({ route, navigation }) {
 
       <FAB
         icon="plus"
-        style={styles.fab}
+        className="absolute m-16 right-0 bottom-20 bg-[#007bff]"
         onPress={() => navigation.navigate('AddMeal', "cat")}
       />
 
-      <Button mode="contained" onPress={() => navigation.navigate('Home')} style={styles.doneButton}>
+      <Button mode="contained" onPress={() => navigation.navigate('Home')} className="mt-1 bg-[#4caf50] py-1 rounded-25 items-center">
         Done
       </Button>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f9f9f9',
-  },
-  mealCard: {
-    marginVertical: 8,
-    borderRadius: 12,
-    elevation: 3,
-    backgroundColor: '#ffffff',
-    padding: 8,
-  },
-  mealInfo: {
-    marginBottom: 8,
-  },
-  mealName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 4,
-  },
-  nutrientText: {
-    fontSize: 14,
-    color: '#7f8c8d',
-  },
-  toggleButton: {
-    alignSelf: 'flex-end',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 4,
-    marginTop: 12,
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 80,
-    backgroundColor: '#007bff',
-  },
-  doneButton: {
-    marginTop: 16,
-    backgroundColor: '#4caf50',
-    paddingVertical: 10,
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  doneButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  noDataContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noDataText: {
-    fontWeight: 'bold',
-    fontSize: 38,
-    color: '#95a5a6',
-    textAlign: 'center',
-  },
-  quantityText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginHorizontal: 8,
-  },
-  quantityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  sortButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  sortButton: {
-    flex: 1,
-    marginHorizontal: 6,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: '#007bff',
-    backgroundColor: '#ffffff',
-    elevation: 2,
-  },
-  selectedButton: {
-    backgroundColor: '#007bff',
-  },
-  sortButtonLabel: {
-    color: '#007bff',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  selectedButtonLabel: {
-    color: '#ffffff',
-  },
-  toggleButton: {
-    flex: 1,
-    marginHorizontal: 6,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: '#f39c12',
-    backgroundColor: '#f39c12',
-    elevation: 2,
-  },
-  toggleButtonLabel: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  searchBar: {
-    flex: 1,
-    marginRight: 8,
-  },
-  searchButton: {
-    backgroundColor: '#007bff',
-    marginHorizontal: 4,
-  },
-  clearButton: {
-    marginHorizontal: 4,
-    color: '#f00',
-  },
-});

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, Alert } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList, Alert } from 'react-native';
 import { Appbar, Button, Card, TextInput,Divider } from 'react-native-paper';
 import app from './api.json';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -107,49 +107,49 @@ export default function ApiMealScreen({ navigation }) {
         <Appbar.Content title="API Meal Search" />
       </Appbar.Header>
 
-      <View style={styles.searchContainer}>
+      <View className="flex-row items-center">
         <TextInput
           mode="outlined"
           label="Search Meals"
           placeholder="e.g., rice, chicken"
           value={searchQuery}
           onChangeText={setSearchQuery}
-          style={styles.searchBar}
+          className="flex-1 mr-4"
         />
         {searchQuery && (
-          <Button mode="text" onPress={clearSearch} style={styles.clearButton}>
+          <Button mode="text" onPress={clearSearch} className="ml-4">
             Clear
           </Button>
         )}
       </View>
 
-      <View style={styles.container}>
-        <Button mode="contained" onPress={fetchNutritionData} style={styles.searchButton}>
+      <View className="flex-1 p-6 bg-[#f9f9f9]">
+        <Button mode="contained" onPress={fetchNutritionData} className="my-2">
           SEARCH
         </Button>
 
-        {isLoading && <ActivityIndicator size="large" color="blue" style={styles.loader} />}
+        {isLoading && <ActivityIndicator size="large" color="blue" className="my-20" />}
 
         <FlatList
           data={data}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
-            <Card style={styles.card}>
+            <Card className="my-8 rounded-10">
               <Card.Content>
-                <Text style={styles.foodName}>{item.name}</Text>
-                <Text style={styles.details}>Calories: {item.calories} kcal</Text>
+                <Text className="text-xl font-bold mb-3">{item.name}</Text>
+                <Text className="text-base mb-2">Calories: {item.calories} kcal</Text>
                 <Divider />
-                <Text style={styles.details}>Protein: {item.protein_g}g</Text>
-                <Text style={styles.details}>Carbs: {item.carbohydrates_total_g}g</Text>
-                <Text style={styles.details}>Fats: {item.fat_total_g}g</Text>
+                <Text className="text-base mb-2">Protein: {item.protein_g}g</Text>
+                <Text className="text-base mb-2">Carbs: {item.carbohydrates_total_g}g</Text>
+                <Text className="text-base mb-2">Fats: {item.fat_total_g}g</Text>
                 <Divider />
-                <Text style={styles.details}>Serving Size: {item.serving_size_g}g</Text>
-                <Text style={styles.details}>Fibre: {item.fiber_g}g</Text>
-                <Text style={styles.details}>Sugar: {item.sugar_g}g</Text>
+                <Text className="text-base mb-2">Serving Size: {item.serving_size_g}g</Text>
+                <Text className="text-base mb-2">Fibre: {item.fiber_g}g</Text>
+                <Text className="text-base mb-2">Sugar: {item.sugar_g}g</Text>
                 <Button
                   mode={isMealAdded(item) ? "outlined" :"contained"}
                   onPress={() => (isMealAdded(item) ? removeMeal(item) : addMeal(item))}
-                  style={styles.actionButton}
+                  className="mt-2"
                   icon={isMealAdded(item) ? "minus" : "plus"}
                 >
                   {isMealAdded(item) ? "Remove" : "Add"}
@@ -163,45 +163,4 @@ export default function ApiMealScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#f9f9f9",
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  searchBar: {
-    flex: 1,
-    marginRight: 8,
-  },
-  clearButton: {
-    marginLeft: 8,
-  },
-  searchButton: {
-    marginVertical: 16,
-  },
-  loader: {
-    marginVertical: 20,
-  },
-  card: {
-    marginVertical: 8,
-    borderRadius: 10,
-    elevation: 2,
-  },
-  foodName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  details: {
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  actionButton: {
-    marginTop: 12,
-  },
-});
+

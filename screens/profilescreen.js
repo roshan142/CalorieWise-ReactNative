@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView, ActivityIndicator  } from 'react-native';
-import { Button, TextInput, Card, Title, Appbar, useTheme  } from 'react-native-paper';
+import { View, Text, Alert,ActivityIndicator  } from 'react-native';
+import {TextInput, Card, Title, FAB, useTheme  } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Profile({ navigation }) {
@@ -67,7 +67,7 @@ export default function Profile({ navigation }) {
   }
 
   return (
-    <ScrollView className=" bg-gray-100 p-2 ">
+    <View className=" flex-1 bg-gray-100 p-2 ">
       <Card className="bg-white mb-6 mt-5 rounded-8 shadow-4">
         <Card.Content>
           <Title className="text-2xl font-bold mb-6 text-gray-700">Profile Information</Title>
@@ -142,11 +142,13 @@ export default function Profile({ navigation }) {
           />
         </Card.Content>
       </Card>
-      <Button mode="contained" onPress={handleSave} className="my-5 py-3 mx-6 rounded-8 bg-green-500" labelStyle={{fontSize:22,fontWeight:"bold"}}>
-        <Text className="text-2xl">SAVE</Text>
-        
-      </Button>
-    </ScrollView>
+      <FAB
+    icon="check"
+    color='gold'
+    className="absolute bottom-2 right-2 bg-green-500"
+    onPress={handleSave}
+  />
+    </View>
   );
 }
 
