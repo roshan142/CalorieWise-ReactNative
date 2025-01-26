@@ -127,15 +127,11 @@ export default function AddCategoryMealScreen({ route, navigation }) {
                   label="Search Meals"
                   value={searchQuery}
                   onChangeText={setSearchQuery}
-                  className="flex-1 mr-8"
+                  className="flex-1 mr-1"
                 />
-                <Button mode="contained" onPress={handleSearch} className="bg-[#007bff] mx-4">
-                  Search
-                </Button>
+                <IconButton mode="contained" icon="search-web" onPress={handleSearch} className="bg-[#f9f9f9]" size={35}></IconButton>
                 {searchQuery ? (
-                  <Button mode="text" onPress={handleClearSearch} className="mx-4 bg-[#f00]">
-                    Clear
-                  </Button>
+                  <IconButton mode="contained" icon="delete" onPress={handleClearSearch} className="bg-[#f9f9f9]" size={35}></IconButton>
                 ) : null}
               </View>
       ):(null)}
@@ -159,13 +155,13 @@ export default function AddCategoryMealScreen({ route, navigation }) {
           mode={sortOption === sortOptions[currentSortIndex] ? 'contained' : 'outlined'}
           onPress={cycleSortOption}
           className={`flex-1 mx-3 rounded-25 border-1 border-[#007bff] bg-white ${sortOption === sortOptions[currentSortIndex] ? 'bg-[#007bff]' : ''}`}
-          labelStyle={[{ color: '#007bff', fontSize: 14, fontWeight: 'bold' },sortOption === sortOptions[currentSortIndex] && { color: '#ffffff' },]}>
+          labelStyle={[{ color: '#007bff', fontSize: 12, fontWeight: 'bold' },sortOption === sortOptions[currentSortIndex] && { color: '#ffffff' },]}>
           {sortOptions[currentSortIndex][0].toUpperCase() + sortOptions[currentSortIndex].slice(1)}
         </Button>
         <Button
           mode="outlined"
           onPress={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
-          className="self-end rounded-20 px-4"
+          className="self-end rounded-20 px-4 border-[#f39c12] bg-[#f39c12]"
           labelStyle={{color: '#ffffff',fontSize: 14,fontWeight: '500'}}
         >
           {sortDirection === 'asc' ? '👆' : '👇'}
@@ -219,7 +215,7 @@ export default function AddCategoryMealScreen({ route, navigation }) {
 
       <FAB
         icon="plus"
-        className="absolute m-16 right-0 bottom-20 bg-[#007bff]"
+        className="absolute m-3 right-0 bottom-14 bg-[#007bff]"
         onPress={() => navigation.navigate('AddMeal', "cat")}
       />
 

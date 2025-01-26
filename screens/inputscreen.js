@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Text, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TextInput, Button, Divider, useTheme } from 'react-native-paper';
+import { TextInput, IconButton, Divider, useTheme,FAB } from 'react-native-paper';
 
 export default function InputScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -48,6 +48,8 @@ export default function InputScreen({ navigation }) {
 
     try {
       await AsyncStorage.setItem('userData', JSON.stringify(userData));
+      const water = {water: 0};
+      await AsyncStorage.setItem('waterIntake', JSON.stringify(water));
       navigation.navigate('Home');
     } catch (error) {
       Alert.alert('Error', 'Failed to save data');
@@ -55,8 +57,8 @@ export default function InputScreen({ navigation }) {
   };
 
   return (
-    <ScrollView className="grow p-8 bg-[#f5f5f5]">
-      <Text style={{ color: colors.primary }} className="text-xl font-bold mb-2">Profile</Text>
+    <ScrollView className=" p-6 bg-[#f5f5f5]">
+      <Text style={{ color: colors.primary }} className="text-2xl font-bold mt-6">Profile</Text>
       <Divider className="my-2 bg-[#e0e0e0] h-0.5" />
       <View className="mb-5">
         <TextInput
@@ -79,10 +81,10 @@ export default function InputScreen({ navigation }) {
           onChangeText={(text) => setWeight(text.replace(/[^0-9.]/g, ''))}
           keyboardType="numeric"
           mode="outlined"
-          className="mb-4"        />
+          className=""        />
       </View>
 
-      <Text style={{ color: colors.primary }} className="text-xl font-bold mb-2">Daily Macros Goals</Text>
+      <Text style={{ color: colors.primary }} className="text-2xl font-bold">Daily Macros Goals</Text>
       <Divider className="my-2 bg-[#e0e0e0] h-0.5" />
 
       <View className="mb-2">
@@ -120,19 +122,9 @@ export default function InputScreen({ navigation }) {
           onChangeText={(text) => setWater(text.replace(/[^0-9]/g, ''))}
           keyboardType="numeric"
           mode="outlined"
-          className="mb-4"        />
+          className=""        />
       </View>
-
-      <Button
-        mode="contained"
-        onPress={handleSave}
-        style={{ backgroundColor: colors.primary }}
-        className="rounded-30"
-        contentStyle={{paddingVertical: 10}}
-        icon="check"
-      >
-        Save & Continue
-      </Button>
+      <IconButton icon="check" iconColor='gold' className="bg-green-500 left-60"  onPress={handleSave} size={35}></IconButton>
     </ScrollView>
   );
 }

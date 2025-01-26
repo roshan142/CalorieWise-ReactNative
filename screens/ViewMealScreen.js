@@ -166,7 +166,7 @@ export default function ViewMealScreen({ navigation }) {
           sortOption === sortOptions[currentSortIndex] ? 'bg-[#007bff]' : ''
         }`}
         labelStyle={[
-          { color: '#007bff', fontSize: 14, fontWeight: 'bold' },
+          { color: '#007bff', fontSize: 12, fontWeight: 'bold' },
           sortOption === sortOptions[currentSortIndex] && { color: '#ffffff' },
         ]}
       >

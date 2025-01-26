@@ -16,7 +16,6 @@ export default function HomeScreen({ navigation }) {
   const [waterIntake, setWaterIntake] = useState(0);
 
   useEffect(() => {
-
     const checkForStoredValue = async () => {
       const storedValue = await AsyncStorage.getItem('userData');
       if (!storedValue) {
@@ -34,7 +33,8 @@ export default function HomeScreen({ navigation }) {
         } 
       }
     };
-      checkForStoredValue();
+      const intervalId = setInterval(checkForStoredValue, 1000);
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {

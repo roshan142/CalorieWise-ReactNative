@@ -91,7 +91,7 @@ export default function Overview({ navigation }) {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-300 ">
+      <View className="flex-1 justify-center items-center bg-blue-100 ">
         <ActivityIndicator size="large" color={colors.primary} />
         <Text className="mt-10 text-base text-gray-600">Fetching data...</Text>
       </View>
@@ -99,8 +99,8 @@ export default function Overview({ navigation }) {
   }
 
   return (
-    <ScrollView className="flex-1 p-4 bg-blue-100">
-      <Card className="mb-1 rounded-2 bg-white p-6 ">
+    <ScrollView className="flex-1 p-2 bg-blue-100">
+      <Card className="mb-1 rounded-2 bg-white p-2 ">
         <Card.Title
           title="Weekly Overview"
           titleStyle={{

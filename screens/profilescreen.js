@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Alert,ActivityIndicator  } from 'react-native';
+import { View,ScrollView, Text, Alert,ActivityIndicator  } from 'react-native';
 import {TextInput, Card, Title, FAB, useTheme  } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -67,7 +67,7 @@ export default function Profile({ navigation }) {
   }
 
   return (
-    <View className=" flex-1 bg-gray-100 p-2 ">
+    <ScrollView className=" flex-1 bg-gray-100 p-2 ">
       <Card className="bg-white mb-6 mt-5 rounded-8 shadow-4">
         <Card.Content>
           <Title className="text-2xl font-bold mb-6 text-gray-700">Profile Information</Title>
@@ -96,7 +96,6 @@ export default function Profile({ navigation }) {
           />
         </Card.Content>
       </Card>
-
       <Card className="bg-white mb-6 rounded shadow-4">
         <Card.Content>
           <Title className="text-2xl font-bold mb-6 text-gray-700">Daily Macros</Title>
@@ -142,13 +141,16 @@ export default function Profile({ navigation }) {
           />
         </Card.Content>
       </Card>
+
+      
       <FAB
     icon="check"
     color='gold'
-    className="absolute bottom-2 right-2 bg-green-500"
+    className="absolute bottom-5 right-1 bg-green-500"
     onPress={handleSave}
   />
-    </View>
+
+    </ScrollView>
   );
 }
 
