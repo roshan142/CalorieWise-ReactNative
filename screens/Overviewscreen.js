@@ -99,56 +99,83 @@ export default function Overview({ navigation }) {
   }
 
   return (
-    <ScrollView className="flex-1 p-2 bg-blue-100">
-      <Card className="mb-1 rounded-2 bg-white p-2 ">
-        <Card.Title
-          title="Weekly Overview"
-          titleStyle={{
-            fontSize: 22,
-            fontWeight: 'bold',
-            color: '#333',
-          }}
-          left={(props) => <Avatar.Icon {...props} icon="chart-bar" />}
-        />
-      </Card>
+    <ScrollView className="flex-1 p-4 bg-blue-50">
 
-      {historyData.length === 0 ? (
-        <View className="flex-1 justify-center items-center mt-20">
-          <Text className="text-xl font-bold text-gray-400">No Data Available</Text>
-        </View>
-      ) : (
-        charts.map((chart, index) => (
-          <Card key={index} className="my-3 rounded-12 bg-white">
-            <Card.Content>
-              <Subheading className="text-center text-xl font-bold" style={[{ color: chart.color }]}>{chart.title}</Subheading>
-              <BarChart
-                data={{
-                  labels,
-                  datasets: [{ data: chart.data }],
-                }}
-                width={screenWidth - 53}
-                height={250}
-                yAxisSuffix={chart.title.includes('Calorie') ? ' cal' : chart.title.includes('Water') ? ' ml' : ' g'}
-                fromZero
-                chartConfig={{
-                  backgroundGradientFrom: '#ffffff',
-                  backgroundGradientTo: '#f4f4f4',
-                  decimalPlaces: 0,
-                  barPercentage: 0.6,
-                  color: () => chart.color,
-                  labelColor: () => '#333',
-                }}
-                className="my-2 rounded-12"
-              />
-              <Divider className="my-2 text-gray-300"/>
-              <Text className="text-center text-base text-gray-400">
-                Target: <Text className="font-bold">{chart.target} {chart.title.includes('Calorie') ? 'cal' : chart.title.includes('Water') ? 'ml' :  'g'}</Text>
-              </Text>
-            </Card.Content>
-          </Card>
-        ))
-      )}
-    </ScrollView>
+  {/* Weekly Overview Header */}
+  <Card className="mb-4 rounded-2 bg-white p-4 shadow-lg">
+    <Card.Title
+      title="Weekly Overview"
+      titleStyle={{
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#333',
+        marginLeft: 8
+      }}
+      left={(props) => <Avatar.Icon {...props} icon="chart-bar" />}
+    />
+  </Card>
+
+  {/* No Data Available Message */}
+  {historyData.length === 0 ? (
+    <View className="flex-1 justify-center items-center mt-24">
+      <Text className="text-xl font-bold text-gray-400">No Data Available</Text>
+    </View>
+  ) : (
+    charts.map((chart, index) => (
+      <Card key={index} className="my-4 rounded-12 bg-white shadow-md">
+        <Card.Content>
+          <Subheading
+            className="text-center text-xl font-semibold"
+            style={{ color: chart.color }}
+          >
+            {chart.title}
+          </Subheading>
+
+          {/* BarChart */}
+          <BarChart
+            data={{
+              labels,
+              datasets: [{ data: chart.data }],
+            }}
+            width={screenWidth - 40}  // Reduced width for more margin
+            height={250}
+            yAxisSuffix={
+              chart.title.includes('Calorie')
+                ? ' cal'
+                : chart.title.includes('Water')
+                ? ' ml'
+                : ' g'
+            }
+            fromZero
+            chartConfig={{
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#f4f4f4',
+              decimalPlaces: 0,
+              barPercentage: 0.6,
+              color: () => chart.color,
+              labelColor: () => '#333',
+            }}
+            style={{
+              marginTop: 8,
+              borderRadius: 12,
+              backgroundColor: '#fff',
+            }}
+          />
+
+          {/* Divider */}
+          <Divider className="my-4 text-gray-300" />
+
+          {/* Target Text */}
+          <Text className="text-center text-base text-gray-600">
+            Target: <Text className="font-bold">{chart.target} {chart.title.includes('Calorie') ? 'cal' : chart.title.includes('Water') ? 'ml' : 'g'}</Text>
+          </Text>
+        </Card.Content>
+      </Card>
+    ))
+  )}
+
+</ScrollView>
+
   );
 }
 

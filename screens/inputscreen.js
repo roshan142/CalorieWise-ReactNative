@@ -43,7 +43,8 @@ export default function InputScreen({ navigation }) {
       protein: parseInt(protein),
       carbs: parseInt(carbs),
       fats: parseInt(fats),
-      water: parseInt(water)
+      water: parseInt(water),
+      cupsize:250
     };
 
     try {

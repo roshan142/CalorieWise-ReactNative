@@ -119,109 +119,144 @@ export default function AddCategoryMealScreen({ route, navigation }) {
   };
 
   return (
-    <View className="flex-1 p-4 bg-[#f9f9f9]">
-      {meals.length !==0? (
-      <View className="flex-row items-center mt-5">
-                <TextInput
-                  mode="outlined"
-                  label="Search Meals"
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  className="flex-1 mr-1"
-                />
-                <IconButton mode="contained" icon="search-web" onPress={handleSearch} className="bg-[#f9f9f9]" size={35}></IconButton>
-                {searchQuery ? (
-                  <IconButton mode="contained" icon="delete" onPress={handleClearSearch} className="bg-[#f9f9f9]" size={35}></IconButton>
-                ) : null}
-              </View>
-      ):(null)}
+    <View className="flex-1 p-6 bg-blue-50">
 
-      {meals.length !==0? (
-        <View className="flex-row justify-around items-center mt-2">
-        <Button
-          mode={sortOption === 'name' ? 'contained' : 'outlined'}
-          onPress={() => setSortOption('name')}
-          className={`flex-1 mx-3 rounded-25 border-1 border-[#007bff] bg-white ${
-            sortOption === 'name' ? 'bg-[#007bff]' : ''
-          }`}
-          labelStyle={[
-            { color: '#007bff', fontSize: 14, fontWeight: '500' },
-            sortOption === 'name' && { color: '#ffffff' },
-          ]}
-        >
-          A👉Z
-        </Button>
-        <Button
-          mode={sortOption === sortOptions[currentSortIndex] ? 'contained' : 'outlined'}
-          onPress={cycleSortOption}
-          className={`flex-1 mx-3 rounded-25 border-1 border-[#007bff] bg-white ${sortOption === sortOptions[currentSortIndex] ? 'bg-[#007bff]' : ''}`}
-          labelStyle={[{ color: '#007bff', fontSize: 12, fontWeight: 'bold' },sortOption === sortOptions[currentSortIndex] && { color: '#ffffff' },]}>
-          {sortOptions[currentSortIndex][0].toUpperCase() + sortOptions[currentSortIndex].slice(1)}
-        </Button>
-        <Button
-          mode="outlined"
-          onPress={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
-          className="self-end rounded-20 px-4 border-[#f39c12] bg-[#f39c12]"
-          labelStyle={{color: '#ffffff',fontSize: 14,fontWeight: '500'}}
-        >
-          {sortDirection === 'asc' ? '👆' : '👇'}
-        </Button>
-      </View>
-      ): (null)}
-      
-
-      {filteredMeals.length === 0 ? (
-        <View className="flex-1 justify-center items-center">
-          <Text className="font-bold text-base text-[#95a5a6] text-center">No Meal Data Found</Text>
-        </View>
-      ) : (
-        <FlatList
-  data={filteredMeals}
-  renderItem={({ item }) => (
-    <Card className="my-8 rounded-12 bg-white p-2 mb-0">
-      <Card.Content>
-        <View>
-          <View className="flex-row items-center">
-          <Text className="text-xl font-bold text-[#2c3e50]">{item.name}</Text>
-          <IconButton onPress={() => handleMealToggle(item)} className="bg-white" icon={isMealInCategory(item.id) ?"delete" :"plus-circle" } iconColor={isMealInCategory(item.id) ? "red":"black"}></IconButton>
-          </View>
-          <View className="flex-row items-center">
-          <IconButton
-            icon="minus"
-            size={20}
-            onPress={() => handleQuantityChange(item, -1)}
-            disabled={!isMealInCategory(item.id)}
-          />
-          <Text className="text-base font-bold">{getMealQuantity(item.id)}</Text>
-          <IconButton
-            icon="plus"
-            size={20}
-            onPress={() => handleQuantityChange(item, 1)}
-            disabled={!isMealInCategory(item.id)}
-          />
-        </View>
-          <Paragraph className="text-base text-[#7f8c8d]">Calories:<Text className="font-bold"> {Math.round(item.calories * getMealQuantity(item.id))} cal</Text></Paragraph>
-          <Paragraph className="text-base text-[#7f8c8d]">Protein: <Text className="font-bold">{Math.round(item.protein * getMealQuantity(item.id))}g</Text></Paragraph>
-          <Paragraph className="text-base text-[#7f8c8d]">Carbs: <Text className="font-bold">{Math.round(item.carbs * getMealQuantity(item.id))}g</Text></Paragraph>
-          <Paragraph className="text-base text-[#7f8c8d]">Fats: <Text className="font-bold">{Math.round(item.fats * getMealQuantity(item.id))}g</Text></Paragraph>
-        </View>
-      </Card.Content>
-    </Card>
-  )}
-  keyExtractor={(item, index) => `${item.id}-${index}`} // Ensure unique keys
-/>
-
-      )}
-
-      <FAB
-        icon="plus"
-        className="absolute m-3 right-0 bottom-14 bg-[#007bff]"
-        onPress={() => navigation.navigate('AddMeal', "cat")}
+  {/* Search Meal Section */}
+  {meals.length !== 0 && (
+    <View className="flex-row items-center mt-5 mb-4">
+      <TextInput
+        mode="outlined"
+        label="Search Meals"
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        className="flex-1 mr-2 bg-white rounded-12 shadow-md"
       />
+      <IconButton 
+        mode="contained" 
+        icon="search-web" 
+        onPress={handleSearch} 
+        className="bg-blue-50 text-white rounded-12" 
+        size={35} 
+      />
+      {searchQuery && (
+        <IconButton 
+          mode="contained" 
+          icon="delete" 
+          iconColor='red'
+          onPress={handleClearSearch} 
+          className="bg-blue-50 text-white rounded-12 ml-2" 
+          size={35} 
+        />
+      )}
+    </View>
+  )}
 
-      <Button mode="contained" onPress={() => navigation.navigate('Home')} className="mt-1 bg-[#4caf50] py-1 rounded-25 items-center">
-        Done
+  {/* Sorting Buttons */}
+  {meals.length !== 0 && (
+    <View className="flex-row justify-between items-center mt-4 mb-4">
+      <Button
+        mode={sortOption === 'name' ? 'contained' : 'outlined'}
+        onPress={() => setSortOption('name')}
+        className={`flex-1 mx-2 rounded-25 border-[#007bff] bg-white ${sortOption === 'name' ? 'bg-[#007bff]' : ''}`}
+        labelStyle={[
+          { color: '#007bff', fontSize: 14, fontWeight: '500' },
+          sortOption === 'name' && { color: '#ffffff' },
+        ]}
+      >
+        A👉Z
+      </Button>
+      <Button
+        mode={sortOption === sortOptions[currentSortIndex] ? 'contained' : 'outlined'}
+        onPress={cycleSortOption}
+        className={`flex-1 mx-2 rounded-25 border-[#007bff] bg-white ${sortOption === sortOptions[currentSortIndex] ? 'bg-[#007bff]' : ''}`}
+        labelStyle={[
+          { color: '#007bff', fontSize: 12, fontWeight: 'bold' },
+          sortOption === sortOptions[currentSortIndex] && { color: '#ffffff' },
+        ]}
+      >
+        {sortOptions[currentSortIndex][0].toUpperCase() + sortOptions[currentSortIndex].slice(1)}
+      </Button>
+      <Button
+        mode="outlined"
+        onPress={() => setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+        className="self-end rounded-20 px-4 border-[#f39c12] bg-[#f39c12] text-white"
+        labelStyle={{ fontSize: 14, fontWeight: '500' }}
+      >
+        {sortDirection === 'asc' ? '👆' : '👇'}
       </Button>
     </View>
+  )}
+
+  {/* No Data Found Section */}
+  {filteredMeals.length === 0 ? (
+    <View className="flex-1 justify-center items-center mt-10">
+      <Text className="font-bold text-base text-[#95a5a6] text-center">No Meal Data Found</Text>
+    </View>
+  ) : (
+    <FlatList
+      data={filteredMeals}
+      renderItem={({ item }) => (
+        <Card className="my-4 rounded-12 bg-white p-4 shadow-md">
+          <Card.Content>
+            <View className="flex-row items-center justify-between">
+              <Text className="text-xl font-bold text-[#2c3e50]">{item.name}</Text>
+              <IconButton
+                onPress={() => handleMealToggle(item)}
+                className="bg-white"
+                icon={isMealInCategory(item.id) ? "delete" : "plus-circle"}
+                iconColor={isMealInCategory(item.id) ? "red" : "black"}
+              />
+            </View>
+            <View className="flex-row items-center mt-2">
+              <IconButton
+                icon="minus"
+                size={20}
+                onPress={() => handleQuantityChange(item, -1)}
+                disabled={!isMealInCategory(item.id)}
+              />
+              <Text className="text-base font-bold">{getMealQuantity(item.id)}</Text>
+              <IconButton
+                icon="plus"
+                size={20}
+                onPress={() => handleQuantityChange(item, 1)}
+                disabled={!isMealInCategory(item.id)}
+              />
+            </View>
+            <Paragraph className="text-base text-[#7f8c8d] mt-2">
+              Calories: <Text className="font-bold">{Math.round(item.calories * getMealQuantity(item.id))} cal</Text>
+            </Paragraph>
+            <Paragraph className="text-base text-[#7f8c8d]">
+              Protein: <Text className="font-bold">{Math.round(item.protein * getMealQuantity(item.id))}g</Text>
+            </Paragraph>
+            <Paragraph className="text-base text-[#7f8c8d]">
+              Carbs: <Text className="font-bold">{Math.round(item.carbs * getMealQuantity(item.id))}g</Text>
+            </Paragraph>
+            <Paragraph className="text-base text-[#7f8c8d]">
+              Fats: <Text className="font-bold">{Math.round(item.fats * getMealQuantity(item.id))}g</Text>
+            </Paragraph>
+          </Card.Content>
+        </Card>
+      )}
+      keyExtractor={(item, index) => `${item.id}-${index}`}
+    />
+  )}
+
+  {/* Floating Action Button */}
+  <FAB
+    icon="plus"
+    className="absolute m-4 right-4 bottom-16 bg-[#007bff] shadow-lg"
+    onPress={() => navigation.navigate('AddMeal', "cat")}
+  />
+
+  {/* Done Button */}
+  <Button
+    mode="contained"
+    onPress={() => navigation.navigate('Home')}
+    className="mt-4 bg-[#4caf50] py-2 rounded-25 items-center shadow-lg"
+  >
+    Done
+  </Button>
+</View>
+
   );
 }

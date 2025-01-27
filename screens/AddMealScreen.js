@@ -49,62 +49,92 @@ export default function AddMealScreen({ route,navigation }) {
   };
 
   return (
-    <View className="flex-1 justify-center">
-      <Card className="rounded-lg bg-gray-50">
-        <Card.Content>
-          <Title className="text-3xl font-bold mb-1 text-center">Add a New Meal</Title>
-          <TextInput
-            mode="outlined"
-            label="Meal Name"
-            value={mealName}
-            onChangeText={setMealName}
-            className="mb-3"
-          />
-          <TextInput
-            mode="outlined"
-            label="Calories"
-            keyboardType="numeric"
-            value={calories}
-            onChangeText={setCalories}
-            className="mb-3"
-          />
-          <TextInput
-            mode="outlined"
-            label="Protein (g)"
-            keyboardType="numeric"
-            value={protein}
-            onChangeText={setProtein}
-            className="mb-3"
-          />
-          <TextInput
-            mode="outlined"
-            label="Carbs (g)"
-            keyboardType="numeric"
-            value={carbs}
-            onChangeText={setCarbs}
-            className="mb-3"
-          />
-          <TextInput
-            mode="outlined"
-            label="Fats (g)"
-            keyboardType="numeric"
-            value={fats}
-            onChangeText={setFats}
-            className="mb-3"
-          />
-        </Card.Content>
-      </Card>
-      <FAB
-          icon="keyboard-backspace"
-          className="absolute m-4 left-0 bottom-0 bg-green-500"
-          onPress={() => fromtab()}
-        />
-        <FAB
-          icon="check"
-          className="absolute m-4 right-0 bottom-0 bg-green-500"
-          onPress={addMeal}
-        />
-    </View>
+    <View className="flex-1 justify-center bg-blue-50 px-4 py-6">
+  <Card className="rounded-2xl bg-white shadow-lg">
+    <Card.Content>
+      <Title className="text-2xl font-extrabold text-center text-[#333] mb-4">Add a New Meal</Title>
+      <TextInput
+        mode="outlined"
+        label="Meal Name"
+        value={mealName}
+        onChangeText={setMealName}
+        className="mb-4"
+        style={{
+          backgroundColor: "#F5F5F5",
+        }}
+        outlineColor="#4CAF50"
+        activeOutlineColor="#388E3C"
+      />
+      <TextInput
+        mode="outlined"
+        label="Calories"
+        keyboardType="numeric"
+        value={calories}
+        onChangeText={setCalories}
+        className="mb-4"
+        style={{
+          backgroundColor: "#F5F5F5",
+        }}
+        outlineColor="#4CAF50"
+        activeOutlineColor="#388E3C"
+      />
+      <TextInput
+        mode="outlined"
+        label="Protein (g)"
+        keyboardType="numeric"
+        value={protein}
+        onChangeText={setProtein}
+        className="mb-4"
+        style={{
+          backgroundColor: "#F5F5F5",
+        }}
+        outlineColor="#4CAF50"
+        activeOutlineColor="#388E3C"
+      />
+      <TextInput
+        mode="outlined"
+        label="Carbs (g)"
+        keyboardType="numeric"
+        value={carbs}
+        onChangeText={setCarbs}
+        className="mb-4"
+        style={{
+          backgroundColor: "#F5F5F5",
+        }}
+        outlineColor="#4CAF50"
+        activeOutlineColor="#388E3C"
+      />
+      <TextInput
+        mode="outlined"
+        label="Fats (g)"
+        keyboardType="numeric"
+        value={fats}
+        onChangeText={setFats}
+        className="mb-4"
+        style={{
+          backgroundColor: "#F5F5F5",
+        }}
+        outlineColor="#4CAF50"
+        activeOutlineColor="#388E3C"
+      />
+    </Card.Content>
+  </Card>
+
+  {/* Floating Action Buttons */}
+  <View className="flex-row justify-between mt-6">
+    <FAB
+      icon="keyboard-backspace"
+      className="bg-red-500 rounded-full w-14 h-14 shadow-md"
+      onPress={fromtab}
+    />
+    <FAB
+      icon="check"
+      className="bg-green-500 rounded-full w-14 h-14 shadow-md"
+      onPress={addMeal}
+    />
+  </View>
+</View>
+
   );
 }
 

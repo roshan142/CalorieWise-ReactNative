@@ -20,7 +20,7 @@ export default function Setting({ navigation }) {
   };
 
   return (
-    <ScrollView className="flex-1 p-5 bg-gray-100 ">
+    <ScrollView className="flex-1 p-5 bg-blue-100 ">
       <Title className="text-3xl font-bold mb-5 text-center" style={{ color: theme.colors.primary }}>
         Settings
       </Title>
