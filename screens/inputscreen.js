@@ -125,7 +125,7 @@ export default function InputScreen({ navigation }) {
           mode="outlined"
           className=""        />
       </View>
-      <IconButton icon="check" iconColor='gold' className="bg-green-500 left-60"  onPress={handleSave} size={35}></IconButton>
+      <IconButton icon="arrow-right" iconColor='gold' className="bg-green-500 left-60"  onPress={handleSave} size={35}></IconButton>
     </ScrollView>
   );
 }

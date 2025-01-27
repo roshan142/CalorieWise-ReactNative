@@ -174,8 +174,10 @@ export default function Profile({ navigation }) {
     {/* Units & Metrics Card */}
     <Card className="bg-white mb-6 rounded-xl shadow-lg">
       <Card.Content>
-        <Title className="text-2xl font-semibold text-gray-800 mb-6">Units & Metrics</Title>
-        <Text className="text-lg font-bold text-gray-600 mb-4">Cup Size (ml)</Text>
+        <Title className="text-2xl font-semibold text-gray-800 mb-3">Units & Metrics</Title>
+        <Text className="text-lg font-bold text-gray-600 mb-1">Cup Size (ml)</Text>
+        <Text className="text-lg font-medium text-center text-gray-500">
+        1 Cup = <Text className="font-bold">{cupsize}ml</Text></Text>
         <SegmentedButtons
           value={cupsize}
           onValueChange={setcupsize}

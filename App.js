@@ -20,7 +20,6 @@ import ApiMealScreen from './screens/ApiMealScreen.js';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Create Bottom Tab Navigator for Home, Overview, and Settings
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
@@ -32,11 +31,8 @@ const BottomTabNavigator = () => {
           if (route.name === 'Home') {
             iconName = 'home';
           } else if (route.name === 'Overview') {
-            iconName = 'insert-chart';
-          } else if (route.name === 'Settings') {
-            iconName = 'settings';
-          }
-          else if (route.name === 'Meals') {
+            iconName = 'pie-chart';
+          }else if (route.name === 'Meals') {
             iconName = 'fastfood';
           }
           else if (route.name === 'Profile'){
@@ -45,7 +41,7 @@ const BottomTabNavigator = () => {
 
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#6750a5',
+        tabBarActiveTintColor: '#2563eb',
         tabBarInactiveTintColor: 'gray',
         tabBarStyle: {
           backgroundColor: '#f8f9fa',
@@ -54,13 +50,13 @@ const BottomTabNavigator = () => {
           height: 60, // Increase height for a more spacious feel
         },
         headerShown: false, // Hide header for tab screens
+        tabBarShowLabel: false,
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Overview" component={Overview} />
       <Tab.Screen name="Meals" component={ViewMealScreen} />
       <Tab.Screen name="Profile" component={Profile} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
       
     </Tab.Navigator>
   );
@@ -82,6 +78,7 @@ export default function App() {
         <Stack.Screen name="AddCategoryMealScreen" component={AddCategoryMealScreen} />
         <Stack.Screen name="Developermode" component={Developermode} />
         <Stack.Screen name="ApiMeal" component={ApiMealScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

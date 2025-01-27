@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, Alert } from 'react-native';
-import { Card, Button, Title, Paragraph, ProgressBar, Avatar, IconButton } from 'react-native-paper';
+import { Card, Button, Title, Paragraph, ProgressBar, Avatar, IconButton, Icon } from 'react-native-paper';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -121,6 +121,7 @@ export default function HomeScreen({ navigation }) {
       }
       await AsyncStorage.setItem('mealHistory', JSON.stringify(historyArray));
       await AsyncStorage.removeItem('MealAddedDate')
+      Alert.alert("Saved Successfully");
     } catch (error) {
       Alert.alert('Error', 'Failed to save data',error);
     }
@@ -158,7 +159,7 @@ export default function HomeScreen({ navigation }) {
     <Card className="mb-6 rounded-2xl bg-gray-50 shadow-md" key={mealType}>
       <Card.Content>
         <View className="flex-row justify-between items-center mb-4">
-          <Title className="text-lg font-bold text-[#333]">{title}</Title>
+          <Title className="text-2xl font-bold text-[#333]">{title}</Title>
           <Avatar.Icon size={40} icon="silverware" color="#4CAF50" style={{ backgroundColor: "#E8F5E9" }} />
         </View>
         {(meals[mealType] || []).length > 0 ? (
@@ -172,15 +173,18 @@ export default function HomeScreen({ navigation }) {
             </Paragraph>
           ))
         ) : (
-          <Paragraph className="font-bold text-base text-[#999] text-center my-2">
-            No meals added
+          <View className="flex-row items-top">
+          <Paragraph className="font-bold text-lg text-[#999] text-center">
+           {"\t\t"}Add Meals by pressing Here
           </Paragraph>
+          <Icon source="arrow-down-right" size={40} className=""></Icon>
+          </View>
         )}
       </Card.Content>
       <Card.Actions className="flex-row justify-end mt-2">
         <IconButton
           mode="contained"
-          className="bg-[#E8F5E9] shadow-md"
+          className="bg-gray-50 shadow-md"
           onPress={() => AsyncStorage.removeItem(`meals_${mealType}`)}
           icon="delete-forever"
           size={28}
@@ -199,66 +203,43 @@ export default function HomeScreen({ navigation }) {
 
 
   const waterProgress = userData.water ? Math.min(Math.max(waterIntake / userData.water, 0), 1) : 0;
-  const todayDate = moment().format('dddd, MMMM D, YYYY');
   const cupsize= userData.cupsize;
   
   return (
     <ScrollView className="flex-1 bg-blue-50">
-    {/* Welcome Section */}
-    <View className="mt-6 bg-white p-6 m-4 rounded-2xl shadow-lg">
-      <Text className="text-xl font-semibold text-gray-600">👋 Welcome Back,</Text>
-      <Text className="text-4xl font-extrabold text-blue-600 mt-2">
-        {userData.name}!
-      </Text>
-      <Text className="text-base text-gray-500 mt-2">
-        Let’s keep track of your calories and stay healthy!
-      </Text>
-    </View>
+    <View className="bg-white p-6 m-2 rounded-2xl shadow-lg mb-2">
+  <View className="flex-row items-center justify-between">
+    <Text className="text-2xl font-semibold text-gray-600">👋 Welcome Back,</Text>
+    <IconButton
+      icon="cog"
+      className="bg-[#E8F5E9] shadow-md"
+      size={30}
+      onPress={() => navigation.navigate('Settings')}
+    />
+  </View>
+  <Text className="text-4xl font-extrabold text-blue-600">
+    {userData.name}!
+  </Text>
+  <Text className="text-lg text-gray-500 mt-2">
+    Let’s keep track of your calories and stay healthy!
+  </Text>
+</View>
+
   
-    {/* Water Intake Card */}
-    <Card className="m-4 rounded-2xl bg-white shadow-lg p-5">
-      <Card.Title
-        title="Water Intake"
-        titleStyle={{
-          fontSize: 22,
-          fontWeight: 'bold',
-          color: '#333',
-          marginBottom: 5,
-        }}
-        left={(props) => (
-          <Avatar.Icon
-            {...props}
-            icon="cup-water"
-            color="#42A5F5"
-            size={50}
-            className="bg-white"
-          />
-        )}
-        leftStyle={{ marginRight: 10 }}
+    <Card className="m-2 rounded-2xl bg-white shadow-lg mb-2">
+  <Card.Content>
+    <View className="">
+      <View className="flex-row items-center">
+    <Avatar.Icon
+        icon="cup-water"
+        color="#42A5F5"
+        size={50}
+        className="bg-white"
       />
-      <Card.Content>
-        <View className="my-3">
-          <Text className="text-lg font-medium mb-4 text-center text-gray-500">
-            1 Cup = <Text className="font-bold">{cupsize}ml</Text>
-          </Text>
-          <ProgressBar
-            progress={waterProgress}
-            color="#42A5F5"
-            className="h-4 rounded-full bg-gray-200"
-          />
-          <Text className="text-base text-center mt-4 text-gray-600">
-            <Text className="font-bold">
-              {Math.floor(waterIntake / cupsize)} Cups
-            </Text>{' '}
-            /{' '}
-            <Text className="font-bold">
-              {Math.floor(userData.water / cupsize)} Cups
-            </Text>{' '}
-            ({Math.round(waterProgress * 100)}%)
-          </Text>
-        </View>
-      </Card.Content>
-      <Card.Actions className="flex justify-between">
+    <Text className="text-2xl font-bold">Water Intake</Text>
+</View>
+      <View className="flex-row items-center justify-between space-x-4">
+        {/* Minus Button */}
         <IconButton
           mode="contained"
           onPress={() => handleAddWater(-cupsize)}
@@ -266,6 +247,16 @@ export default function HomeScreen({ navigation }) {
           icon="minus"
           iconColor="#fff"
         />
+        
+        {/* Progress Bar */}
+        <View className="flex-1">
+        <ProgressBar
+          progress={waterProgress}
+          color="#42A5F5"
+          className="h-4 rounded-full bg-gray-200"
+        /></View>
+        
+        {/* Plus Button */}
         <IconButton
           mode="contained"
           onPress={() => handleAddWater(cupsize)}
@@ -273,29 +264,39 @@ export default function HomeScreen({ navigation }) {
           icon="plus"
           iconColor="#fff"
         />
-      </Card.Actions>
-    </Card>
-  
-    {/* Meals Section */}
-    <View className="px-4 py-6 bg-white rounded-2xl shadow-lg mx-4 mt-6">
+      </View>
+      <Text className="text-base text-center text-gray-600">
+        <Text className="font-bold">
+          {Math.floor(waterIntake / cupsize)} Cups
+        </Text>{' '}
+        /{' '}
+        <Text className="font-bold">
+          {Math.floor(userData.water / cupsize)} Cups
+        </Text>{' '}
+        ({Math.round(waterProgress * 100)}%)
+      </Text>
+    </View>
+  </Card.Content>
+</Card>
+    <View className="px-4 py-3 bg-white rounded-2xl shadow-lg mt-4 mb-4 m-2">
       <Text className="text-2xl font-bold text-center pb-4 text-gray-700">
         Today's Meals
       </Text>
       {['breakfast', 'lunch', 'snack', 'dinner'].map((mealType, index) =>
         renderMealCard(mealType, mealType.charAt(0).toUpperCase() + mealType.slice(1))
       )}
-      <Button
+    </View>
+
+    <Button
         mode="contained"
         onPress={savebutton}
         buttonColor="#4CAF50"
-        className="mt-6 py-3 rounded-full self-center w-11/12 shadow-lg"
-        labelStyle={{ fontSize: 18, fontWeight: 'bold', color: '#fff' }}
-      >
+        className=" py-3 rounded-lg self-center w-4/12 shadow-lg mb-3"
+        labelStyle={{ fontSize: 18, fontWeight: 'bold', color: '#fff' }}>
         SAVE
       </Button>
-    </View>
-  </ScrollView>
-  
+
+  </ScrollView> 
   );
 }
 

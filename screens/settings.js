@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Alert, ActivityIndicator } from 'react-native';
-import { Button, Card, Title, Text, useTheme } from 'react-native-paper';
+import { Button, Card, Title, Text, useTheme,FAB } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Setting({ navigation }) {
@@ -20,11 +20,8 @@ export default function Setting({ navigation }) {
   };
 
   return (
-    <ScrollView className="flex-1 p-5 bg-blue-100 ">
-      <Title className="text-3xl font-bold mb-5 text-center" style={{ color: theme.colors.primary }}>
-        Settings
-      </Title>
-
+    <View className="flex-1 bg-blue-100 ">
+    <ScrollView className="flex-1 p-5">
       {isLoading ? (
         <View className="flex-1 items-center justify-center my-50">
           <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -124,5 +121,16 @@ export default function Setting({ navigation }) {
         </>
       )}
     </ScrollView>
+    <FAB
+            icon="keyboard-backspace"
+            className="absolute bottom-1 left-2 shadow-lg rounded-full"
+            onPress={() => {navigation.goBack()}}
+            style={{
+              backgroundColor: 'rgba(0, 123, 255, 0.3)', // Adjust color and transparency
+            }}
+          />
+
+
+    </View>
   );
 }

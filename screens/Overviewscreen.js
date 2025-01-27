@@ -42,7 +42,7 @@ export default function Overview({ navigation }) {
 
           setTimeout(() => {
             setIsLoading(false);
-          }, 800); // Slight delay for a smoother loading experience
+          }, 500); // Slight delay for a smoother loading experience
         } catch (error) {
           console.error('Error fetching history data:', error);
         }
@@ -154,24 +154,38 @@ export default function Overview({ navigation }) {
 
   return (
     <ScrollView className="flex-1 p-4 bg-blue-50">
-<Card className="rounded-10 bg-white shadow-lg p-4 mb-5">
+<Card className="rounded-lg bg-white shadow-md p-3 mb-4">
   <Card.Title
     title="Today's Overview"
-    titleStyle={{ fontSize: 24, fontWeight: 'bold', color: '#333' }}
-    left={(props) => <Avatar.Icon {...props} icon="calendar-today" color="#4CAF50" className="bg-white" size={60} />}
-    leftStyle={{ marginRight: 10 }}
+    titleStyle={{ fontSize: 18, fontWeight: 'bold', color: '#333' }}
+    left={(props) => (
+      <Avatar.Icon
+        {...props}
+        icon="calendar-today"
+        color="#4CAF50"
+        className="bg-[#E8F5E9]"
+        size={40}
+      />
+    )}
+    leftStyle={{ marginRight: 8 }}
   />
   <Card.Content>
-    <Title className="text-xl font-bold text-[#333] mb-4">
-      Calorie and Nutrient Goals
-    </Title>
-    <Text className="font-medium text-base text-[#777] mb-4">{todayDate}</Text>
+    <Text className="text-sm font-medium text-gray-500 mb-3">{todayDate}</Text>
 
-    <Divider className="my-5 h-0.5 bg-[#E0E0E0]" />
+    <Divider className="mb-3 h-0.5 bg-gray-200" />
 
     {['Calories', 'Protein', 'Carbs', 'Fats'].map((nutrient, index) => (
-      <View key={index} className="mb-6">
-        <Text className="text-base font-semibold text-[#555] mb-2">{nutrient}</Text>
+      <View key={index} className="mb-4">
+        {/* Nutrient Label */}
+        <View className="flex-row justify-between items-center mb-1">
+          <Text className="text-sm font-semibold text-gray-700">{nutrient}</Text>
+          <Text className="text-xs font-medium text-gray-500">
+            {totals[nutrient.toLowerCase()]} / {userData[nutrient.toLowerCase()]}
+            {nutrient === 'Calories' ? ' Cal' : ' g'}
+          </Text>
+        </View>
+
+        {/* Progress Bar */}
         <ProgressBar
           progress={
             nutrient === 'Calories'
@@ -193,15 +207,12 @@ export default function Overview({ navigation }) {
               ? '#29B6F6'
               : '#FFCA28'
           }
-          className="h-4 rounded-full bg-[#F0F0F0]"
+          className="h-3 rounded-full bg-gray-100"
         />
-        <Text className="text-sm text-center mt-3 text-[#444]">
-          <Text className="font-bold">{totals[nutrient.toLowerCase()]}</Text> /{' '}
-          <Text className="font-bold">
-            {userData[nutrient.toLowerCase()]}
-            {nutrient === 'Calories' ? ' Cal' : ' g'}
-          </Text>{' '}
-          (<Text className="font-bold">{Math.round(
+
+        {/* Percentage */}
+        <Text className="text-xs text-right mt-1 text-gray-500">
+          {Math.round(
             (nutrient === 'Calories'
               ? calorie_progress
               : nutrient === 'Protein'
@@ -209,12 +220,14 @@ export default function Overview({ navigation }) {
               : nutrient === 'Carbs'
               ? carbs_progress
               : fats_progress) * 100
-          )}%</Text>)
+          )}
+          %
         </Text>
       </View>
     ))}
   </Card.Content>
 </Card>
+
 
 {historyData.length === 0 ? (
   ''
@@ -233,21 +246,26 @@ export default function Overview({ navigation }) {
       left={(props) => <Avatar.Icon {...props} icon="chart-bar" color='#4CAF50' className="bg-white" size={60} />}
     />
   </Card>
-  <View>
   <SegmentedButtons
     value={viewchart}
     onValueChange={setViewchart}
     buttons={[
-      { value: 'Calorie', label: 'Cal', icon: 'food' },
-      { value: 'Protein', label: 'Pro', icon: 'food-drumstick' },
-      { value: 'Carbs', label: 'Carb', icon: 'food-fork-drink' },
-      { value: 'Fats', label: 'Fat', icon: 'food-variant' },
+      { value: 'Calorie', label: 'Calorie', icon: 'food' },
+      { value: 'Protein', label: 'Protein', icon: 'food-drumstick' },
+      { value: 'Carbs', label: 'Carbs', icon: 'food-fork-drink' },
+    ]}
+    className="mb-1"
+  />
+  <SegmentedButtons
+    value={viewchart}
+    onValueChange={setViewchart}
+    buttons={[
+      { value: 'Fats', label: 'Fats', icon: 'food-variant' },
       { value: 'water', label: 'Water', icon: 'cup-water' }
     ]}
     className="mb-2"
   />
-</View>
-      <Card className="my-4 rounded-12 bg-white shadow-md">
+      <Card className=" rounded-12 bg-white shadow-md mb-8 mt-4">
         <Card.Content>
           <Subheading
             className="text-center text-xl font-semibold"

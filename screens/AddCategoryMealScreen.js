@@ -1,7 +1,7 @@
 import React, {useState, useEffect,  useCallback} from 'react';
 import {View, Text, FlatList, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Button, Card, TextInput, FAB, Paragraph, useTheme,IconButton} from 'react-native-paper';
+import {Button, Card, TextInput, FAB, Paragraph, useTheme,IconButton,Avatar,Title} from 'react-native-paper';
 import moment from 'moment';
 
 export default function AddCategoryMealScreen({ route, navigation }) {
@@ -13,7 +13,7 @@ export default function AddCategoryMealScreen({ route, navigation }) {
   const [sortDirection, setSortDirection] = useState('asc');
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredMeals, setFilteredMeals] = useState([]);
-  const sortOptions = ['cal', 'protein', 'carbs', 'fats']; // Define the sorting options
+  const sortOptions = ['calorie', 'protein', 'carbs', 'fats']; // Define the sorting options
   const [currentSortIndex, setCurrentSortIndex] = useState(0);
   
 
@@ -48,7 +48,7 @@ export default function AddCategoryMealScreen({ route, navigation }) {
       switch (option) {
         case 'name':
           return a.name.localeCompare(b.name);
-        case 'cal':
+        case 'calorie':
           return a.calories - b.calories;
         case 'protein':
           return a.protein - b.protein;
@@ -196,46 +196,80 @@ export default function AddCategoryMealScreen({ route, navigation }) {
     <FlatList
       data={filteredMeals}
       renderItem={({ item }) => (
-        <Card className="my-4 rounded-12 bg-white p-4 shadow-md">
-          <Card.Content>
-            <View className="flex-row items-center justify-between">
-              <Text className="text-xl font-bold text-[#2c3e50]">{item.name}</Text>
-              <IconButton
-                onPress={() => handleMealToggle(item)}
-                className="bg-white"
-                icon={isMealInCategory(item.id) ? "delete" : "plus-circle"}
-                iconColor={isMealInCategory(item.id) ? "red" : "black"}
-              />
-            </View>
-            <View className="flex-row items-center mt-2">
-              <IconButton
-                icon="minus"
-                size={20}
-                onPress={() => handleQuantityChange(item, -1)}
-                disabled={!isMealInCategory(item.id)}
-              />
-              <Text className="text-base font-bold">{getMealQuantity(item.id)}</Text>
-              <IconButton
-                icon="plus"
-                size={20}
-                onPress={() => handleQuantityChange(item, 1)}
-                disabled={!isMealInCategory(item.id)}
-              />
-            </View>
-            <Paragraph className="text-base text-[#7f8c8d] mt-2">
-              Calories: <Text className="font-bold">{Math.round(item.calories * getMealQuantity(item.id))} cal</Text>
-            </Paragraph>
-            <Paragraph className="text-base text-[#7f8c8d]">
-              Protein: <Text className="font-bold">{Math.round(item.protein * getMealQuantity(item.id))}g</Text>
-            </Paragraph>
-            <Paragraph className="text-base text-[#7f8c8d]">
-              Carbs: <Text className="font-bold">{Math.round(item.carbs * getMealQuantity(item.id))}g</Text>
-            </Paragraph>
-            <Paragraph className="text-base text-[#7f8c8d]">
-              Fats: <Text className="font-bold">{Math.round(item.fats * getMealQuantity(item.id))}g</Text>
-            </Paragraph>
-          </Card.Content>
-        </Card>
+        <Card className="my-2 rounded-2xl bg-white shadow-lg p-4">
+  <Card.Content>
+    {/* Header Section */}
+    <View className="flex-row items-center justify-between mb-4">
+      <View>
+        <Text className="text-xl font-bold text-gray-800">{item.name}</Text>
+      </View>
+      <View className="flex-row items-center space-x-2">
+        <IconButton
+          onPress={() => handleMealToggle(item)}
+          className="bg-gray-100"
+          icon={isMealInCategory(item.id) ? "delete" : "plus-circle"}
+          iconColor={isMealInCategory(item.id) ? "red" : "gray"}
+        />
+        <Avatar.Icon
+          size={45}
+          icon="silverware"
+          color="#4CAF50"
+          style={{ backgroundColor: "#E8F5E9" }}
+        />
+      </View>
+    </View>
+
+    {/* Quantity Section */}
+    <View className="flex-row items-center justify-between bg-gray-50 rounded-xl px-3 py-2 mb-4 shadow-sm">
+      <IconButton
+        icon="minus"
+        size={20}
+        onPress={() => handleQuantityChange(item, -1)}
+        disabled={!isMealInCategory(item.id)}
+        iconColor={!isMealInCategory(item.id) ? "gray" : "red"}
+      />
+      <Text className="text-lg font-semibold text-gray-700">
+        {getMealQuantity(item.id)}
+      </Text>
+      <IconButton
+        icon="plus"
+        size={20}
+        onPress={() => handleQuantityChange(item, 1)}
+        disabled={!isMealInCategory(item.id)}
+        iconColor={!isMealInCategory(item.id) ? "gray" : "green"}
+      />
+    </View>
+
+    {/* Nutritional Info Section */}
+    <View className="bg-gray-100 rounded-xl p-3 shadow-sm">
+      <Text className="text-base text-gray-600">
+        Calories:{" "}
+        <Text className="font-bold text-gray-800">
+          {Math.round(item.calories * getMealQuantity(item.id))} cal
+        </Text>
+      </Text>
+      <Text className="text-base text-gray-600">
+        Protein:{" "}
+        <Text className="font-bold text-gray-800">
+          {Math.round(item.protein * getMealQuantity(item.id))} g
+        </Text>
+      </Text>
+      <Text className="text-base text-gray-600">
+        Carbs:{" "}
+        <Text className="font-bold text-gray-800">
+          {Math.round(item.carbs * getMealQuantity(item.id))} g
+        </Text>
+      </Text>
+      <Text className="text-base text-gray-600">
+        Fats:{" "}
+        <Text className="font-bold text-gray-800">
+          {Math.round(item.fats * getMealQuantity(item.id))} g
+        </Text>
+      </Text>
+    </View>
+  </Card.Content>
+</Card>
+
       )}
       keyExtractor={(item, index) => `${item.id}-${index}`}
     />
@@ -244,15 +278,18 @@ export default function AddCategoryMealScreen({ route, navigation }) {
   {/* Floating Action Button */}
   <FAB
     icon="plus"
-    className="absolute m-4 right-4 bottom-16 bg-[#007bff] shadow-lg"
+    className="absolute m-4 right-4 bottom-20 bg-[#007bff] shadow-lg"
     onPress={() => navigation.navigate('AddMeal', "cat")}
+    style={{
+      backgroundColor: 'rgba(0, 123, 255, 0.3)', // Adjust color and transparency
+    }}
   />
 
   {/* Done Button */}
   <Button
     mode="contained"
     onPress={() => navigation.navigate('Home')}
-    className="mt-4 bg-[#4caf50] py-2 rounded-25 items-center shadow-lg"
+    className="bg-[#4caf50] py-2 rounded-25 items-center shadow-lg"
   >
     Done
   </Button>
